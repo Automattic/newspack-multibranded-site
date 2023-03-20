@@ -14,6 +14,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Define NEWSPACK_MULTIBRANDED_SITE_PLUGIN_DIR.
+if ( ! defined( 'NEWSPACK_MULTIBRANDED_SITE_PLUGIN_DIR' ) ) {
+	define( 'NEWSPACK_MULTIBRANDED_SITE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
 // Load language files.
 load_plugin_textdomain( 'newspack-plugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
