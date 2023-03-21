@@ -33,6 +33,12 @@ class Taxonomy {
 	 */
 	const PRIMARY_META_KEY = '_primary_brand';
 
+	/**
+	 * The current brand, determined depending on the context on WP initiazliation.
+	 *
+	 * @var ?WP_Term
+	 */
+	private static $current_brand;
 
 	/**
 	 * Runs the initialization.
@@ -40,6 +46,16 @@ class Taxonomy {
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_taxonomy' ) );
 		add_action( 'add_term_meta', array( __CLASS__, 'reset_primary' ), 10, 2 );
+		add_action( 'wp', array( __CLASS__, 'determine_current_brand' ) );
+	}
+
+	/**
+	 * Get the current brand, depending on the context
+	 *
+	 * @return ?WP_Term The current brand term.
+	 */
+	public static function get_current() {
+		return self::$current_brand;
 	}
 
 	/**
@@ -114,7 +130,7 @@ class Taxonomy {
 		$params = array(
 			'labels'             => $labels,
 			'hierarchical'       => true, // True to have the checkbox UI instead of the tags UI.
-			'publicly_queryable' => false,
+			'publicly_queryable' => true,
 			'show_in_nav_menus'  => true,
 			'show_in_menu'       => false,
 			'show_ui'            => true,
@@ -145,6 +161,54 @@ class Taxonomy {
 		}
 		global $wpdb;
 		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->termmeta WHERE meta_key = %s", self::PRIMARY_META_KEY ) ); //phpcs:ignore
+	}
+
+	/**
+	 * Get the current brand based on a post.
+	 *
+	 * If a post has is of a supported post type and has only one brand, it will return this brand, otherwise it will return the primary brand.
+	 *
+	 * @param int|WP_Post $post_or_post_id The Post object or the post id.
+	 * @return ?WP_Term The current brand for the post. Will only return null if there is no brands created yet.
+	 */
+	public static function get_current_brand_for_post( $post_or_post_id ) {
+		$post  = $post_or_post_id instanceof \WP_Post ? $post_or_post_id : get_post( $post_or_post_id );
+		$terms = wp_get_post_terms( $post->ID, self::SLUG );
+		if ( in_array( $post->post_type, self::POST_TYPES, true ) && 1 === count( $terms ) ) {
+			return $terms[0];
+		}
+		return self::get_primary();
+	}
+
+	/**
+	 * Get the current brand based on a term.
+	 *
+	 * If a term is a brand, it will return this brand, otherwise it will return the primary brand.
+	 *
+	 * @param int|WP_Term $term_or_term_id The Term object or the term id.
+	 * @return ?WP_Term The current brand for the post. Will only return null if there is no brands created yet.
+	 */
+	public static function get_current_brand_for_term( $term_or_term_id ) {
+		$term = $term_or_term_id instanceof \WP_Term ? $term_or_term_id : get_term( $term_or_term_id );
+		if ( self::SLUG === $term->taxonomy ) {
+			return $term;
+		}
+		return self::get_primary();
+	}
+
+	/**
+	 * Determines and stores the current brand depending on the current context.
+	 *
+	 * @return void
+	 */
+	public static function determine_current_brand() {
+		if ( is_singular() ) {
+			self::$current_brand = self::get_current_brand_for_post( get_queried_object() );
+		} elseif ( is_tax() ) {
+			self::$current_brand = self::get_current_brand_for_term( get_queried_object() );
+		} else {
+			self::$current_brand = self::get_primary();
+		}
 	}
 
 }
