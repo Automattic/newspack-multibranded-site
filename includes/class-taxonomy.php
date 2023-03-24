@@ -44,9 +44,9 @@ class Taxonomy {
 	 * Runs the initialization.
 	 */
 	public static function init() {
-		add_action( 'init', array( __CLASS__, 'register_taxonomy' ) );
-		add_action( 'add_term_meta', array( __CLASS__, 'reset_primary' ), 10, 2 );
-		add_action( 'wp', array( __CLASS__, 'determine_current_brand' ) );
+		add_action( 'init', [ __CLASS__, 'register_taxonomy' ] );
+		add_action( 'add_term_meta', [ __CLASS__, 'reset_primary' ], 10, 2 );
+		add_action( 'wp', [ __CLASS__, 'determine_current_brand' ] );
 	}
 
 	/**
@@ -137,7 +137,6 @@ class Taxonomy {
 			'show_admin_column'  => true,
 			'show_in_rest'       => true,
 			'query_var'          => true,
-			'rewrite'            => array( 'slug' => 'brand' ),
 			'capabilities'       => array(
 				'manage_terms' => 'manage_options',
 				'edit_terms'   => 'manage_options',
@@ -146,6 +145,9 @@ class Taxonomy {
 			),
 		);
 		register_taxonomy( self::SLUG, self::POST_TYPES, $params );
+
+		// Initialize metadata.
+		Meta\Url::init();
 	}
 
 	/**
