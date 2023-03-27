@@ -34,6 +34,13 @@ class Taxonomy {
 	const PRIMARY_META_KEY = '_primary_brand';
 
 	/**
+	 * The meta key used to flag the primary brand.
+	 *
+	 * @var string
+	 */
+	const PRIMARY_OPTION_NAME = 'primary_brand';
+
+	/**
 	 * The current brand, determined depending on the context on WP initiazliation.
 	 *
 	 * @var ?WP_Term
@@ -45,8 +52,10 @@ class Taxonomy {
 	 */
 	public static function init() {
 		add_action( 'init', [ __CLASS__, 'register_taxonomy' ] );
-		add_action( 'add_term_meta', [ __CLASS__, 'reset_primary' ], 10, 2 );
 		add_action( 'wp', [ __CLASS__, 'determine_current_brand' ] );
+
+		add_action( 'rest_api_init', [ __CLASS__, 'register_options' ] );
+		add_action( 'admin_init', [ __CLASS__, 'register_options' ] );
 	}
 
 	/**
@@ -64,20 +73,14 @@ class Taxonomy {
 	 * @return ?WP_Term The primary term. If no term is set as primary, the first term will be returned. If no terms exist, null will be returned.
 	 */
 	public static function get_primary() {
-		$params = array(
-			'taxonomy'   => self::SLUG,
-			'hide_empty' => false,
-			'number'     => 1,
-			'meta_query' => array(
-				array(
-					'key'         => self::PRIMARY_META_KEY,
-					'compare_key' => 'EXISTS',
-				),
-			),
-		);
-		$terms  = get_terms( $params );
-		if ( ! empty( $terms ) && $terms[0] instanceof \WP_Term ) {
-			return $terms[0];
+		$option = get_option( self::PRIMARY_OPTION_NAME );
+		if ( $option ) {
+			$term = get_term( $option );
+			if ( $term instanceof \WP_Term ) {
+				return $term;
+			}
+			// If the option is set but the term doesn't exist, reset the option.
+			delete_option( self::PRIMARY_OPTION_NAME );
 		}
 
 		// if nothing was found, return the first term.
@@ -105,7 +108,7 @@ class Taxonomy {
 		if ( ! $term instanceof \WP_Term || self::SLUG !== $term->taxonomy ) {
 			return false;
 		}
-		return (bool) add_term_meta( $term->term_id, self::PRIMARY_META_KEY, true );
+		return (bool) update_option( self::PRIMARY_OPTION_NAME, $term->term_id );
 	}
 
 	/**
@@ -152,18 +155,12 @@ class Taxonomy {
 	}
 
 	/**
-	 * Hooked into the add_term_meta hook, will clear the primary brand meta key from all terms to make sure we only have one primary brand.
+	 * Initializes the options
 	 *
-	 * @param int    $term_id The term ID.
-	 * @param string $meta_key Metadata key.
 	 * @return void
 	 */
-	public static function reset_primary( $term_id, $meta_key ) {
-		if ( self::PRIMARY_META_KEY !== $meta_key ) {
-			return;
-		}
-		global $wpdb;
-		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->termmeta WHERE meta_key = %s", self::PRIMARY_META_KEY ) ); //phpcs:ignore
+	public static function register_options() {
+		Options\Primary_Brand::init();
 	}
 
 	/**
