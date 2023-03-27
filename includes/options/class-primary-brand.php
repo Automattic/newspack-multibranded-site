@@ -10,7 +10,7 @@ namespace Newspack_Multibranded_Site\Options;
 use Newspack_Multibranded_Site\Taxonomy;
 
 /**
- * Newspack Multi-branded site term meta parent class
+ * Newspack Multi-branded site Primary Brand option
  */
 abstract class Primary_Brand {
 

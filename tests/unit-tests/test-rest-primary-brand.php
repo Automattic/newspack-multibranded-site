@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Newspack_Multibranded_Site\Taxonomy;
 
 /**
- * Tests editing the Url metadata from the rest api.
+ * Tests editing the Primary brand option from the rest api.
  */
 class Test_Rest_Primary_Brand extends WP_UnitTestCase {
 
