@@ -38,7 +38,7 @@ class Taxonomy {
 	 *
 	 * @var string
 	 */
-	const PRIMARY_OPTION_NAME = 'primary_brand';
+	const PRIMARY_OPTION_NAME = 'newspack_primary_brand';
 
 	/**
 	 * The current brand, determined depending on the context on WP initiazliation.
