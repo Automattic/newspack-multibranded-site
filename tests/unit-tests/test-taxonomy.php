@@ -30,40 +30,15 @@ class TestTaxonomy extends WP_UnitTestCase {
 		$primary = Taxonomy::get_primary();
 		$this->assertSame( $term1->term_id, $primary->term_id, 'If no primary was set, should return the first' );
 
-		add_term_meta( $term3->term_id, Taxonomy::PRIMARY_META_KEY, true );
+		Taxonomy::set_primary( $term3->term_id );
 
 		$primary = Taxonomy::get_primary();
 		$this->assertSame( $term3->term_id, $primary->term_id );
 
-		add_term_meta( $term2->term_id, Taxonomy::PRIMARY_META_KEY, true );
+		Taxonomy::set_primary( $term2->term_id );
 
 		$primary = Taxonomy::get_primary();
 		$this->assertSame( $term2->term_id, $primary->term_id );
-	}
-
-	/**
-	 * Test reset primary on setting a new primary.
-	 */
-	public function test_reset_primary_on_add() {
-		$term1 = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
-		$term2 = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
-		$term3 = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
-
-		global $wpdb;
-		$query = $wpdb->prepare( "SELECT count(term_id) FROM $wpdb->termmeta WHERE meta_key = %s", Taxonomy::PRIMARY_META_KEY );
-
-		// phpcs:disable
-		$this->assertSame( 0, (int) $wpdb->get_var( $query ), 'No primary term should be set' );
-
-		add_term_meta( $term1->term_id, Taxonomy::PRIMARY_META_KEY, true );
-		$this->assertSame( 1, (int) $wpdb->get_var( $query ), 'One primary term should be set' );
-
-		add_term_meta( $term2->term_id, Taxonomy::PRIMARY_META_KEY, true );
-		$this->assertSame( 1, (int) $wpdb->get_var( $query ), 'One primary term should be set' );
-
-		add_term_meta( $term3->term_id, Taxonomy::PRIMARY_META_KEY, true );
-		$this->assertSame( 1, (int) $wpdb->get_var( $query ), 'One primary term should be set' );
-		// phpcs:enable
 	}
 
 	/**
