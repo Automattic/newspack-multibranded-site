@@ -32,3 +32,5 @@ require_once __DIR__ . '/../vendor/yoast/phpunit-polyfills/phpunitpolyfills-auto
 
 // Start up the WP testing environment.
 require "{$newspack_multibranded_site_test_dir}/includes/bootstrap.php";
+
+require dirname( __FILE__ ) . '/class-newspack-multibranded-rest-testcase.php';
