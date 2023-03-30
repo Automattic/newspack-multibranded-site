@@ -118,6 +118,7 @@ class Admin {
 			'is_debug_mode'       => class_exists( \Newspack\Newspack::class ) && \Newspack\Newspack::is_debug_mode(),
 			'has_completed_setup' => get_option( NEWSPACK_SETUP_COMPLETE ),
 			'site_title'          => get_option( 'blogname' ),
+			'theme_colors'        => Customizations\Theme_Colors::get_registered_theme_colors(),
 		);
 
 		wp_localize_script( self::MULTI_BRANDED_PAGE_SLUG, 'newspack_urls', $urls );

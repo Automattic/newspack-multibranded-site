@@ -51,7 +51,7 @@ class Taxonomy {
 	 * Runs the initialization.
 	 */
 	public static function init() {
-		add_action( 'init', [ __CLASS__, 'register_taxonomy' ] );
+		add_action( 'setup_theme', [ __CLASS__, 'register_taxonomy' ] );
 		add_action( 'wp', [ __CLASS__, 'determine_current_brand' ] );
 
 		add_action( 'rest_api_init', [ __CLASS__, 'register_options' ] );
@@ -157,6 +157,7 @@ class Taxonomy {
 		Meta\ShowPageOnFront::init();
 		Meta\Post_Primary_Brand::init();
 		Meta\Logo::init();
+		Meta\Theme_Colors::init();
 	}
 
 	/**
