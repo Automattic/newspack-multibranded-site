@@ -14,11 +14,11 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_unauthorized() {
 		wp_set_current_user( 0 );
-		$response = $this->distpatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'yes' );
+		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'yes' );
 		$this->assertSame( 401, $response->get_status() );
 
 		wp_set_current_user( $this->secondary_user_id->ID );
-		$response = $this->distpatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'yes' );
+		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'yes' );
 		$this->assertSame( 403, $response->get_status() );
 	}
 
@@ -27,7 +27,7 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_valid_input() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->distpatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 2 );
+		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 2 );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -39,9 +39,9 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_delete() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->distpatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 2 );
+		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 2 );
 
-		$response = $this->distpatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), null );
+		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), null );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -54,7 +54,7 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_invalid_input() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->distpatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'asd' );
+		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'asd' );
 		$data     = $response->get_data();
 		$this->assertSame( 400, $response->get_status() );
 	}

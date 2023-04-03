@@ -35,11 +35,11 @@ class Test_Rest_Theme_Colors extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_unauthorized() {
 		wp_set_current_user( 0 );
-		$response = $this->distpatch_request_to_edit_termmeta( Theme_Colors::get_key(), $this->get_sample_valid_input() );
+		$response = $this->dispatch_request_to_edit_termmeta( Theme_Colors::get_key(), $this->get_sample_valid_input() );
 		$this->assertSame( 401, $response->get_status() );
 
 		wp_set_current_user( $this->secondary_user_id->ID );
-		$response = $this->distpatch_request_to_edit_termmeta( Theme_Colors::get_key(), $this->get_sample_valid_input() );
+		$response = $this->dispatch_request_to_edit_termmeta( Theme_Colors::get_key(), $this->get_sample_valid_input() );
 		$this->assertSame( 403, $response->get_status() );
 	}
 
@@ -48,7 +48,7 @@ class Test_Rest_Theme_Colors extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_valid_input() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->distpatch_request_to_edit_termmeta( Theme_Colors::get_key(), $this->get_sample_valid_input() );
+		$response = $this->dispatch_request_to_edit_termmeta( Theme_Colors::get_key(), $this->get_sample_valid_input() );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -74,7 +74,7 @@ class Test_Rest_Theme_Colors extends Newspack_Multibranded_Rest_Testcase {
 				'color' => '#00ZZZZ',
 			],
 		];
-		$response = $this->distpatch_request_to_edit_termmeta( Theme_Colors::get_key(), $invalid );
+		$response = $this->dispatch_request_to_edit_termmeta( Theme_Colors::get_key(), $invalid );
 		$data     = $response->get_data();
 		$this->assertSame( 400, $response->get_status() );
 	}

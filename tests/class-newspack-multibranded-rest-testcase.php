@@ -75,7 +75,7 @@ class Newspack_Multibranded_Rest_Testcase extends WP_UnitTestCase {
 	 * @param string $value The new meta value.
 	 * @return WP_REST_Response
 	 */
-	protected function distpatch_request_to_edit_termmeta( $key, $value ) {
+	protected function dispatch_request_to_edit_termmeta( $key, $value ) {
 		$endpoint = '/wp/v2/' . Taxonomy::SLUG . '/' . $this->term1->term_id;
 
 		$request = new WP_REST_Request(
@@ -108,7 +108,7 @@ class Newspack_Multibranded_Rest_Testcase extends WP_UnitTestCase {
 	 * @param string $value The meta value.
 	 * @return WP_REST_Response
 	 */
-	protected function distpatch_request_to_edit_postmeta( $post_id, $key, $value ) {
+	protected function dispatch_request_to_edit_postmeta( $post_id, $key, $value ) {
 		$endpoint = '/wp/v2/posts/' . $post_id;
 
 		$request = new WP_REST_Request(
@@ -140,7 +140,7 @@ class Newspack_Multibranded_Rest_Testcase extends WP_UnitTestCase {
 	 * @param string $value The option value.
 	 * @return WP_REST_Response
 	 */
-	protected function distpatch_request_to_edit_option( $option_name, $value ) {
+	protected function dispatch_request_to_edit_option( $option_name, $value ) {
 		$endpoint = '/wp/v2/settings';
 
 		$request = new WP_REST_Request(
