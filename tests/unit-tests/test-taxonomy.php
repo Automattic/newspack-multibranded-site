@@ -70,29 +70,32 @@ class TestTaxonomy extends WP_UnitTestCase {
 	 * Tests get current brand and determine current brand methods
 	 */
 	public function test_determine_current_brand() {
-		$author                    = $this->factory->user->create_and_get();
-		$term1                     = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
-		$term2                     = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
-		$category                  = $this->factory->term->create_and_get( array( 'taxonomy' => 'category' ) );
-		$post                      = $this->factory->post->create_and_get(
+		$author_wo_brand             = $this->factory->user->create_and_get();
+		$author_with_brand           = $this->factory->user->create_and_get();
+		$author_with_invalid_brand   = $this->factory->user->create_and_get();
+		$author_with_invalid_brand_2 = $this->factory->user->create_and_get();
+		$term1                       = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
+		$term2                       = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
+		$category                    = $this->factory->term->create_and_get( array( 'taxonomy' => 'category' ) );
+		$post                        = $this->factory->post->create_and_get(
 			array(
 				'post_title'  => 'Post 1',
-				'post_author' => $author->ID,
+				'post_author' => $author_wo_brand->ID,
 			)
 		);
-		$post_2_brands             = $this->factory->post->create_and_get(
+		$post_2_brands               = $this->factory->post->create_and_get(
 			array(
 				'post_title'  => 'Post 2',
-				'post_author' => $author->ID,
+				'post_author' => $author_wo_brand->ID,
 			)
 		);
-		$post_2_brands_and_primary = $this->factory->post->create_and_get(
+		$post_2_brands_and_primary   = $this->factory->post->create_and_get(
 			array(
 				'post_title'  => 'Post 2 and primary',
-				'post_author' => $author->ID,
+				'post_author' => $author_wo_brand->ID,
 			)
 		);
-		$page                      = $this->factory->post->create_and_get(
+		$page                        = $this->factory->post->create_and_get(
 			array(
 				'post_title' => 'Post 2',
 				'post_type'  => 'page',
@@ -105,6 +108,10 @@ class TestTaxonomy extends WP_UnitTestCase {
 		wp_set_post_terms( $post_2_brands_and_primary->ID, [ $term1->term_id, $term2->term_id ], Taxonomy::SLUG );
 		add_post_meta( $post_2_brands_and_primary->ID, Taxonomy::PRIMARY_META_KEY, $term2->term_id );
 		wp_set_post_terms( $post_2_brands->ID, $category->term_id, 'category' );
+
+		add_user_meta( $author_with_brand->ID, Taxonomy::PRIMARY_META_KEY, $term1->term_id );
+		add_user_meta( $author_with_invalid_brand->ID, Taxonomy::PRIMARY_META_KEY, 999999 );
+		add_user_meta( $author_with_invalid_brand_2->ID, Taxonomy::PRIMARY_META_KEY, $category->term_id );
 
 		// home.
 		$this->go_to( '/' );
@@ -135,7 +142,16 @@ class TestTaxonomy extends WP_UnitTestCase {
 		$this->assertSame( $term2->term_id, Taxonomy::get_current()->term_id, 'Primary brand should be returned if on post with two brands and primary' );
 
 		// author archive.
-		$this->go_to( get_author_posts_url( $author->ID ) );
+		$this->go_to( get_author_posts_url( $author_wo_brand->ID ) );
 		$this->assertSame( null, Taxonomy::get_current(), 'Null should be returned if on author archive' );
+
+		$this->go_to( get_author_posts_url( $author_with_brand->ID ) );
+		$this->assertSame( $term1->term_id, Taxonomy::get_current()->term_id, 'Brand should be returned if on author archive when primary brand is set' );
+
+		$this->go_to( get_author_posts_url( $author_with_invalid_brand->ID ) );
+		$this->assertSame( null, Taxonomy::get_current(), 'Null should be returned if on author archive when primary brand is invalid' );
+
+		$this->go_to( get_author_posts_url( $author_with_invalid_brand_2->ID ) );
+		$this->assertSame( null, Taxonomy::get_current(), 'Null should be returned if on author archive when primary brand is invalid' );
 	}
 }

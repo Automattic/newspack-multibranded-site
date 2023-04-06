@@ -157,6 +157,25 @@ class Taxonomy {
 	}
 
 	/**
+	 * Get the current brand based on an author.
+	 *
+	 * If the author has a custom primary brand, it will return this brand
+	 *
+	 * @param int $author_id The author ID.
+	 * @return ?WP_Term The current brand for the post.
+	 */
+	public static function get_current_brand_for_author( $author_id ) {
+		$author_brand = get_user_meta( $author_id, self::PRIMARY_META_KEY, true );
+		if ( ! $author_brand ) {
+			return;
+		}
+		$brand = get_term( $author_brand, self::SLUG );
+		if ( $brand instanceof \WP_Term ) {
+			return $brand;
+		}
+	}
+
+	/**
 	 * Determines and stores the current brand depending on the current context.
 	 *
 	 * @return void
@@ -166,6 +185,8 @@ class Taxonomy {
 			self::$current_brand = self::get_current_brand_for_post( get_queried_object() );
 		} elseif ( is_tax() ) {
 			self::$current_brand = self::get_current_brand_for_term( get_queried_object() );
+		} elseif ( is_author() ) {
+			self::$current_brand = self::get_current_brand_for_author( get_queried_object_id() );
 		} else {
 			self::$current_brand = null;
 		}
