@@ -1,0 +1,10 @@
+.newspack-brand {
+	&__header {
+		&__logo {
+			.newspack-image-upload__image {
+				border-color: rgba( black, 0.54 );
+				height: 98px;
+			}
+		}
+	}
+}
