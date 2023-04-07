@@ -20,7 +20,7 @@ import {
 
 import './style.scss';
 
-const Brand = ( { brands = [], saveBrand } ) => {
+const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 	const [ brand, updateBrand ] = hooks.useObjectState();
 	const [ publicPages, setPublicPages ] = useState( [] );
 
@@ -28,7 +28,12 @@ const Brand = ( { brands = [], saveBrand } ) => {
 	const selectedBrand = brands.find( ( { id } ) => id === Number( brandId ) );
 
 	useEffect( () => {
-		updateBrand( selectedBrand );
+		if ( selectedBrand ) {
+			updateBrand( selectedBrand );
+			if ( ! isNaN( selectedBrand.meta?._logo ) ) {
+				fetchLogoAttachment( Number( brandId ), selectedBrand.meta?._logo );
+			}
+		}
 	}, [ selectedBrand ] );
 
 	const defaultHomepageURLMeta = {
@@ -166,7 +171,11 @@ const Brand = ( { brands = [], saveBrand } ) => {
 			/>
 
 			<div className="newspack-buttons-card">
-				<Button disabled={ ! isBrandValid } isPrimary onClick={ () => saveBrand( brandId, brand ) }>
+				<Button
+					disabled={ ! isBrandValid }
+					isPrimary
+					onClick={ () => saveBrand( Number( brandId ), brand ) }
+				>
 					{ __( 'Save', 'newspack' ) }
 				</Button>
 				<Button isSecondary href="#/">

@@ -56,10 +56,16 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 			},
 			quiet: true,
 		} )
-			.then( result =>
+			.then( () =>
 				setBrands( brandsList => {
-					// if(brandId)
-					return [ result, ...brandsList ];
+					if ( brandId ) {
+						const brandIndex = brandsList.findIndex( _brand => brandId === _brand.id );
+						if ( brandIndex > -1 ) {
+							return brandsList.map( _brand => ( brandId === _brand.id ? brand : _brand ) );
+						}
+					}
+
+					return [ brand, ...brandsList ];
 				} )
 			)
 			.then( navigate( '/' ) )
@@ -79,6 +85,31 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 				setError( e );
 			} );
 	};
+
+	const fetchLogoAttachment = ( brandId, attachmentId ) =>
+		wizardApiFetch( {
+			path: `/wp/v2/media/${ attachmentId }`,
+			method: 'GET',
+		} )
+			.then( attachment =>
+				setBrands( brandsList => {
+					const brandIndex = brandsList.findIndex( _brand => brandId === _brand.id );
+					return brandIndex > -1
+						? brandsList.map( _brand =>
+								brandId === _brand.id
+									? {
+											..._brand,
+											meta: {
+												..._brand.meta,
+												_logo: { ...attachment, url: attachment.source_url },
+											},
+									  }
+									: _brand
+						  )
+						: brandsList;
+				} )
+			)
+			.catch( setError );
 
 	useEffect( fetchBrands, [] );
 
@@ -108,6 +139,7 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 						{ ...wizardScreenProps }
 						brands={ brands }
 						saveBrand={ saveBrand }
+						fetchLogoAttachment={ fetchLogoAttachment }
 						setError={ setError }
 						wizardApiFetch={ wizardApiFetch }
 					/>
