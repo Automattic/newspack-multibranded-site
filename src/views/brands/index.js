@@ -86,7 +86,10 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 			} );
 	};
 
-	const fetchLogoAttachment = ( brandId, attachmentId ) =>
+	const fetchLogoAttachment = ( brandId, attachmentId ) => {
+		if ( ! attachmentId ) {
+			return;
+		}
 		wizardApiFetch( {
 			path: `/wp/v2/media/${ attachmentId }`,
 			method: 'GET',
@@ -110,6 +113,7 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 				} )
 			)
 			.catch( setError );
+	};
 
 	useEffect( fetchBrands, [] );
 
