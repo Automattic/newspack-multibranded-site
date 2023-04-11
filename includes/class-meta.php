@@ -46,7 +46,7 @@ abstract class Meta {
 		];
 
 		if ( 'term' === static::$type ) {
-			$params['object_subtype'] = Taxonomy::SLUG;
+			$params['object_subtype'] = static::get_taxonomy();
 		}
 
 		register_meta(
@@ -54,6 +54,15 @@ abstract class Meta {
 			static::get_key(),
 			$params
 		);
+	}
+
+	/**
+	 * Get the taxonomy to register the meta to, if meta type is term
+	 *
+	 * @return string
+	 */
+	public static function get_taxonomy() {
+		return Taxonomy::SLUG;
 	}
 
 	/**
