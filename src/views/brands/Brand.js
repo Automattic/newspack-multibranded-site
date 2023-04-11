@@ -34,6 +34,7 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 			if ( ! isNaN( selectedBrand.meta._logo ) ) {
 				fetchLogoAttachment( Number( brandId ), selectedBrand.meta._logo );
 			}
+			setShowOnFrontSelect( selectedBrand.meta._show_page_on_front ? 'yes' : 'no' );
 		}
 	}, [ selectedBrand ] );
 
