@@ -86,16 +86,18 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 		( 'no' === showOnFrontSelect ||
 			( 'yes' === showOnFrontSelect && 0 < brand.meta._show_page_on_front ) );
 
+	const registeredThemeColors = newspack_aux_data.theme_colors;
+
 	return (
 		<Fragment>
 			<SectionHeader
-				title={ __( 'Brand', 'newspack' ) }
-				description={ __( 'Set your brand identity', 'newspack' ) }
+				title={ __( 'Brand', 'newspack-multibranded-site' ) }
+				description={ __( 'Set your brand identity', 'newspack-multibranded-site' ) }
 			/>
 			<Grid gutter={ 32 }>
 				<Grid columns={ 1 } gutter={ 16 }>
 					<TextControl
-						label={ __( 'Name', 'newspack' ) }
+						label={ __( 'Name', 'newspack-multibranded-site' ) }
 						value={ brand.name || '' }
 						onChange={ updateBrand( 'name' ) }
 						onBlur={ updateSlugFromName }
@@ -111,62 +113,44 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 								  }
 								: {} ),
 						} }
-						label={ __( 'Logo', 'newspack' ) }
+						label={ __( 'Logo', 'newspack-multibranded-site' ) }
 						image={ brand.meta._logo }
 						onChange={ _logo => updateBrand( { meta: { _logo } } ) }
 					/>
 				</Grid>
 			</Grid>
 
-			<SectionHeader
-				title={ __( 'Colors', 'newspack' ) }
-				description={ __( 'Pick your primary and secondary colors', 'newspack' ) }
-			/>
-			<Grid gutter={ 32 }>
-				<ColorPicker
-					label={ __( 'Primary' ) }
-					color={ getThemeColor( 'primary_color_hex' ) }
-					onChange={ primary_color_hex => setThemeColor( 'primary_color_hex', primary_color_hex ) }
+			{ registeredThemeColors && (
+				<SectionHeader
+					title={ __( 'Colors', 'newspack-multibranded-site' ) }
+					description={ __(
+						'These are the colors you can customize for this brand in the active theme',
+						'newspack-multibranded-site'
+					) }
 				/>
-				<ColorPicker
-					label={ __( 'Secondary' ) }
-					color={ getThemeColor( 'secondary_color_hex' ) }
-					onChange={ secondary_color_hex =>
-						setThemeColor( 'secondary_color_hex', secondary_color_hex )
-					}
-				/>
-			</Grid>
+			) }
 
-			<SectionHeader
-				title={ __( 'Background colors', 'newspack' ) }
-				description={ __( 'Pick your header and footer backgrounds', 'newspack' ) }
-			/>
-			<Grid gutter={ 32 }>
-				<ColorPicker
-					label={ __( 'Header Background' ) }
-					color={ getThemeColor( 'header_background_hex' ) }
-					onChange={ header_background_hex =>
-						setThemeColor( 'header_background_hex', header_background_hex )
-					}
-				/>
-				<ColorPicker
-					label={ __( 'Footer Background' ) }
-					color={ getThemeColor( 'footer_background_hex' ) }
-					onChange={ footer_background_hex =>
-						setThemeColor( 'footer_background_hex', footer_background_hex )
-					}
-				/>
-			</Grid>
+			{ registeredThemeColors &&
+				registeredThemeColors.map( color => {
+					return (
+						<ColorPicker
+							key={ color.theme_mod_name }
+							label={ color.label }
+							color={ getThemeColor( color.theme_mod_name ) }
+							onChange={ newColor => setThemeColor( color.theme_mod_name, newColor ) }
+						/>
+					);
+				} ) }
 
-			<SectionHeader title={ __( 'Settings', 'newspack' ) } />
+			<SectionHeader title={ __( 'Settings', 'newspack-multibranded-site' ) } />
 			<Card noBorder>
 				<RadioControl
 					className="newspack-brand__base-url-radio-control"
-					label={ __( 'URL Base', 'newspack' ) }
+					label={ __( 'URL Base', 'newspack-multibranded-site' ) }
 					selected={ brand?.meta._custom_url || 'yes' }
 					options={ [
-						{ label: __( 'Homepage', 'newspack' ), value: 'yes' },
-						{ label: __( 'Default', 'newspack' ), value: 'no' },
+						{ label: __( 'Homepage', 'newspack-multibranded-site' ), value: 'yes' },
+						{ label: __( 'Default', 'newspack-multibranded-site' ), value: 'no' },
 					] }
 					onChange={ _custom_url => updateBrand( { meta: { _custom_url } } ) }
 				/>
@@ -174,7 +158,7 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 					<span>{ baseUrl }</span>
 					<TextControl
 						className="newspack-brand__base-url-component__text-control"
-						label={ __( 'Slug', 'newspack' ) }
+						label={ __( 'Slug', 'newspack-multibranded-site' ) }
 						hideLabelFromVision
 						withMargin={ false }
 						value={ brand.slug || '' }
@@ -186,21 +170,21 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 			<Card noBorder>
 				<RadioControl
 					className="newspack-brand__base-url-radio-control"
-					label={ __( 'Show on Front', 'newspack' ) }
+					label={ __( 'Show on Front', 'newspack-multibranded-site' ) }
 					selected={ showOnFrontSelect }
 					options={ [
-						{ label: __( 'Latest posts', 'newspack' ), value: 'no' },
-						{ label: __( 'A page', 'newspack' ), value: 'yes' },
+						{ label: __( 'Latest posts', 'newspack-multibranded-site' ), value: 'no' },
+						{ label: __( 'A page', 'newspack-multibranded-site' ), value: 'yes' },
 					] }
 					onChange={ value => updateShowOnFront( value ) }
 				/>
 				{ 'yes' === showOnFrontSelect && (
 					<SelectControl
-						label={ __( 'Homepage URL', 'newspack' ) }
+						label={ __( 'Homepage URL', 'newspack-multibranded-site' ) }
 						value={ brand.meta._show_page_on_front || 0 }
 						options={ [
 							{
-								label: __( 'Select a Page', 'newspack' ),
+								label: __( 'Select a Page', 'newspack-multibranded-site' ),
 								value: 0,
 								disabled: true,
 							},
@@ -221,10 +205,10 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 					isPrimary
 					onClick={ () => saveBrand( Number( brandId ), brand ) }
 				>
-					{ __( 'Save', 'newspack' ) }
+					{ __( 'Save', 'newspack-multibranded-site' ) }
 				</Button>
 				<Button isSecondary href="#/">
-					{ __( 'Cancel', 'newspack' ) }
+					{ __( 'Cancel', 'newspack-multibranded-site' ) }
 				</Button>
 			</div>
 		</Fragment>
