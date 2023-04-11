@@ -56,16 +56,18 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 			},
 			quiet: true,
 		} )
-			.then( () =>
+			.then( result =>
 				setBrands( brandsList => {
+					// The result from the API call doesn't contain the logo details.
+					const newBrand = { id: result.id, ...brand };
 					if ( brandId ) {
 						const brandIndex = brandsList.findIndex( _brand => brandId === _brand.id );
 						if ( brandIndex > -1 ) {
-							return brandsList.map( _brand => ( brandId === _brand.id ? brand : _brand ) );
+							return brandsList.map( _brand => ( brandId === _brand.id ? newBrand : _brand ) );
 						}
 					}
 
-					return [ brand, ...brandsList ];
+					return [ newBrand, ...brandsList ];
 				} )
 			)
 			.then( navigate( '/' ) )
