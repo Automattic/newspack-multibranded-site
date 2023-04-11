@@ -133,12 +133,13 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 			{ registeredThemeColors &&
 				registeredThemeColors.map( color => {
 					return (
-						<ColorPicker
-							key={ color.theme_mod_name }
-							label={ color.label }
-							color={ getThemeColor( color.theme_mod_name ) }
-							onChange={ newColor => setThemeColor( color.theme_mod_name, newColor ) }
-						/>
+						<Card noBorder key={ color.theme_mod_name }>
+							<ColorPicker
+								label={ color.label }
+								color={ getThemeColor( color.theme_mod_name ) }
+								onChange={ newColor => setThemeColor( color.theme_mod_name, newColor ) }
+							/>
+						</Card>
 					);
 				} ) }
 
