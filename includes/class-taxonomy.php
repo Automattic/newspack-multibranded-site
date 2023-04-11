@@ -59,10 +59,17 @@ class Taxonomy {
 	 * @return ?WP_Term The current brand term.
 	 */
 	public static function get_current() {
-		if ( empty( self::$current_brand ) ) {
-			self::determine_current_brand();
-		}
-		return self::$current_brand;
+		return apply_filters( 'newspack_multibranded_site_current_brand', self::$current_brand );
+	}
+
+	/**
+	 * Set the current brand
+	 *
+	 * @return void.
+	 */
+	protected static function set_current( $brand_id ) {
+		self::$current_brand = $brand_id;
+		do_action( 'newspack_multibranded_site_current_brand_changed', $brand_id );
 	}
 
 	/**
@@ -212,13 +219,13 @@ class Taxonomy {
 	 */
 	public static function determine_current_brand() {
 		if ( is_singular() ) {
-			self::$current_brand = self::get_current_brand_for_post( get_queried_object() );
+			self::set_current( self::get_current_brand_for_post( get_queried_object() ) );
 		} elseif ( is_tax() || is_category() || is_tag() ) {
-			self::$current_brand = self::get_current_brand_for_term( get_queried_object() );
+			self::set_current( self::get_current_brand_for_term( get_queried_object() ) );
 		} elseif ( is_author() ) {
-			self::$current_brand = self::get_current_brand_for_author( get_queried_object_id() );
+			self::set_current( self::get_current_brand_for_author( get_queried_object_id() ) );
 		} else {
-			self::$current_brand = null;
+			self::set_current( null );
 		}
 	}
 
