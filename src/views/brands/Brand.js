@@ -37,7 +37,7 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 	}, [ selectedBrand ] );
 
 	const defaultHomepageURLMeta = {
-		label: __( 'Default Page', 'newspack' ),
+		label: __( 'Default Page', 'newspack-multibranded-site' ),
 		value: 0,
 	};
 
@@ -72,17 +72,19 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 	// Brand is valid with a name and a logo.
 	const isBrandValid = 0 < brand?.name?.length && 0 < brand?.meta?._logo?.id;
 
+	const registeredThemeColors = newspack_aux_data.theme_colors;
+
 	return (
 		<Fragment>
 			<SectionHeader
-				title={ __( 'Brand', 'newspack' ) }
-				description={ __( 'Set your brand identity', 'newspack' ) }
+				title={ __( 'Brand', 'newspack-multibranded-site' ) }
+				description={ __( 'Set your brand identity', 'newspack-multibranded-site' ) }
 			/>
 			<Grid gutter={ 32 }>
 				<Grid columns={ 1 } gutter={ 16 }>
 					<Card noBorder>
 						<TextControl
-							label={ __( 'Name', 'newspack' ) }
+							label={ __( 'Name', 'newspack-multibranded-site' ) }
 							value={ brand.name || '' }
 							onChange={ updateBrand( 'name' ) }
 						/>
@@ -98,57 +100,39 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 								  }
 								: {} ),
 						} }
-						label={ __( 'Logo', 'newspack' ) }
+						label={ __( 'Logo', 'newspack-multibranded-site' ) }
 						image={ brand.meta?._logo }
 						onChange={ _logo => updateBrand( { meta: { _logo } } ) }
 					/>
 				</Grid>
 			</Grid>
 
-			<SectionHeader
-				title={ __( 'Colors', 'newspack' ) }
-				description={ __( 'Pick your primary and secondary colors', 'newspack' ) }
-			/>
-			<Grid gutter={ 32 }>
-				<ColorPicker
-					label={ __( 'Primary' ) }
-					color={ getThemeColor( 'primary_color_hex' ) }
-					onChange={ primary_color_hex => setThemeColor( 'primary_color_hex', primary_color_hex ) }
+			{ registeredThemeColors && (
+				<SectionHeader
+					title={ __( 'Colors', 'newspack-multibranded-site' ) }
+					description={ __(
+						'These are the colors you can customize for this brand in the active theme',
+						'newspack-multibranded-site'
+					) }
 				/>
-				<ColorPicker
-					label={ __( 'Secondary' ) }
-					color={ getThemeColor( 'secondary_color_hex' ) }
-					onChange={ secondary_color_hex =>
-						setThemeColor( 'secondary_color_hex', secondary_color_hex )
-					}
-				/>
-			</Grid>
+			) }
 
-			<SectionHeader
-				title={ __( 'Background colors', 'newspack' ) }
-				description={ __( 'Pick your header and footer backgrounds', 'newspack' ) }
-			/>
-			<Grid gutter={ 32 }>
-				<ColorPicker
-					label={ __( 'Header Background' ) }
-					color={ getThemeColor( 'header_background_hex' ) }
-					onChange={ header_background_hex =>
-						setThemeColor( 'header_background_hex', header_background_hex )
-					}
-				/>
-				<ColorPicker
-					label={ __( 'Footer Background' ) }
-					color={ getThemeColor( 'footer_background_hex' ) }
-					onChange={ footer_background_hex =>
-						setThemeColor( 'footer_background_hex', footer_background_hex )
-					}
-				/>
-			</Grid>
+			{ registeredThemeColors &&
+				registeredThemeColors.map( color => {
+					return (
+						<ColorPicker
+							key={ color.theme_mod_name }
+							label={ color.label }
+							color={ getThemeColor( color.theme_mod_name ) }
+							onChange={ newColor => setThemeColor( color.theme_mod_name, newColor ) }
+						/>
+					);
+				} ) }
 
-			<SectionHeader title={ __( 'Settings', 'newspack' ) } />
+			<SectionHeader title={ __( 'Settings', 'newspack-multibranded-site' ) } />
 			<Card noBorder>
 				<SelectControl
-					label={ __( 'Homepage URL', 'newspack' ) }
+					label={ __( 'Homepage URL', 'newspack-multibranded-site' ) }
 					value={ brand.meta?._show_page_on_front || '' }
 					options={ [
 						defaultHomepageURLMeta,
@@ -162,8 +146,11 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 			</Card>
 			<ActionCard
 				isMedium
-				title={ __( 'Set as homepage URL', 'newspack' ) }
-				description={ __( 'Whether the brand URL should be at the root of the site.', 'newspack' ) }
+				title={ __( 'Set as homepage URL', 'newspack-multibranded-site' ) }
+				description={ __(
+					'Whether the brand URL should be at the root of the site.',
+					'newspack-multibranded-site'
+				) }
 				toggleChecked={ brand?.meta?._custom_url }
 				toggleOnChange={ _custom_url =>
 					updateBrand( { meta: { _custom_url: _custom_url ? 'yes' : 'no' } } )
@@ -176,10 +163,10 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 					isPrimary
 					onClick={ () => saveBrand( Number( brandId ), brand ) }
 				>
-					{ __( 'Save', 'newspack' ) }
+					{ __( 'Save', 'newspack-multibranded-site' ) }
 				</Button>
 				<Button isSecondary href="#/">
-					{ __( 'Cancel', 'newspack' ) }
+					{ __( 'Cancel', 'newspack-multibranded-site' ) }
 				</Button>
 			</div>
 		</Fragment>
