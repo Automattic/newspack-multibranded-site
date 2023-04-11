@@ -51,7 +51,7 @@ const Brands = ( { setError, wizardApiFetch } ) => {
 				...brand,
 				meta: {
 					...brand.meta,
-					_logo: brand?.meta?._logo ? brand.meta._logo.id : null,
+					...( brand.meta._logo && { _logo: brand.meta._logo.id } ),
 				},
 			},
 			quiet: true,
