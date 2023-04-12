@@ -24,6 +24,7 @@ class Initializer {
 		Customizations\Logo::init();
 		Customizations\Theme_Colors::init();
 		Customizations\Menus::init();
+		Customizations\Save_Entry_Point::init();
 	}
 
 }

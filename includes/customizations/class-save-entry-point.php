@@ -30,27 +30,38 @@ class Save_Entry_Point {
 	 * @param int $logo_id The logo ID.
 	 * @return int
 	 */
-	public static function save_entry_point( $brand_id ) {
+	public static function save_entry_point( $brand ) {
 		if ( ! isset( $_COOKIE[ self::COOKIE_NAME ] ) ) {
-			if ( is_null( $brand_id ) ) {
-				$brand_id = 'none';
+			error_log( 'COOKIE NOT SET' );
+			if ( is_null( $brand ) ) {
+				error_log( 'BRAND IS NULL' );
+				$brand = 'none';
 			}
-			setcookie( self::COOKIE_NAME, $brand_id );
+			if ( $brand instanceof \WP_Term ) {
+				$brand = $brand->term_id;
+			}
+			error_log( 'SETTING COOKIE  as ' . $brand );
+			setcookie( self::COOKIE_NAME, $brand );
 		}
+		error_log( 'COOKIE ALREADY SET' );
 	}
 
 	public static function get_entry_point( $brand ) {
 		if ( ! is_null( $brand ) ) {
+			error_log( 'BRAND NOT NULL, DONT READ COOKIE' );
 			return $brand;
 		}
 
 		if ( isset( $_COOKIE[ self::COOKIE_NAME ] ) && 'none' !== $_COOKIE[ self::COOKIE_NAME ] ) {
-			$brand_id    = $_COOKIE[ self::COOKIE_NAME ];
+			error_log( 'BRAND IS NULL, READ COOKIE' );
+			$brand_id = $_COOKIE[ self::COOKIE_NAME ];
+			error_log( 'BRAND ID IS ' . $brand_id );
 			$entry_point = get_term( $brand_id, Taxonomy::SLUG );
 			if ( $entry_point instanceof \WP_Term ) {
 				return $entry_point;
 			}
 		}
+		error_log( 'BRAND IS NULL, NO COOKIE' );
 		return $brand;
 	}
 

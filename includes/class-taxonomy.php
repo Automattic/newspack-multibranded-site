@@ -67,9 +67,9 @@ class Taxonomy {
 	 *
 	 * @return void.
 	 */
-	protected static function set_current( $brand_id ) {
-		self::$current_brand = $brand_id;
-		do_action( 'newspack_multibranded_site_current_brand_changed', $brand_id );
+	protected static function set_current( $brand ) {
+		self::$current_brand = $brand;
+		do_action( 'newspack_multibranded_site_current_brand_changed', $brand );
 	}
 
 	/**
