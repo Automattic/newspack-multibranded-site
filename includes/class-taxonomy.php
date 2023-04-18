@@ -83,7 +83,7 @@ class Taxonomy {
 		);
 		$params = array(
 			'labels'             => $labels,
-			'hierarchical'       => true, // True to have the checkbox UI instead of the tags UI.
+			'hierarchical'       => true, // Just to get the checkbox UI.
 			'publicly_queryable' => true,
 			'show_in_nav_menus'  => true,
 			'show_in_menu'       => false,
