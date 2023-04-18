@@ -2,12 +2,11 @@
 
 import { __, _n, _x } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import { Button, CheckboxControl, Flex, FlexItem, SelectControl } from '@wordpress/components';
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
-import { registerPlugin } from '@wordpress/plugins';
+import { Button, Flex, FlexItem, SelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
-import { decodeEntities } from '@wordpress/html-entities';
+
+import './index.scss';
 
 /**
  * Module Constants
@@ -29,11 +28,9 @@ const TAXONOMY_SLUG = newspackPostPrimaryBrandVars.taxonomySlug;
 const META_KEY = newspackPostPrimaryBrandVars.metaKey;
 
 /**
- * The Brands panel. Mostly copied from core/editor/components/post-taxonomies/hierarchical-term-selector.js
+ * Adds a primary brand selector to the post editor.
  */
-const NewspackPostPrimaryBrand = () => {
-	const slug = TAXONOMY_SLUG;
-
+const NewspackPostPrimaryBrand = ( { slug } ) => {
 	const { editPost } = useDispatch( 'core/editor' );
 
 	const [ currentPrimaryBrand, setCurrentPrimaryBrand ] = useState( null );
@@ -61,86 +58,60 @@ const NewspackPostPrimaryBrand = () => {
 		return term ? { value: term.id, label: term.name } : null;
 	};
 
-	/**
-	 * Update terms for post.
-	 *
-	 * @param {number[]} termIds Term ids.
-	 */
-	const onUpdateTerms = termIds => {
-		editPost( { [ taxonomy.rest_base ]: termIds } );
-	};
-
-	/**
-	 * Handler for checking term.
-	 *
-	 * @param {number} termId
-	 */
-	const onChange = termId => {
-		const hasTerm = terms.includes( termId );
-		const newTerms = hasTerm ? terms.filter( id => id !== termId ) : [ ...terms, termId ];
-		onUpdateTerms( newTerms );
-	};
-
 	const onChangePrimaryBrand = termId => {
 		editPost( { meta: { [ META_KEY ]: termId } } );
 		setCurrentPrimaryBrand( termId );
 	};
 
 	return (
-		<PluginDocumentSettingPanel
-			name="newspack-multibranded-site-post-brands"
-			title={ __( 'Brands', 'newspack-multibranded-site' ) }
-		>
-			<Flex direction="column" gap="4">
-				<div
-					className="editor-post-taxonomies__hierarchical-terms-list"
-					tabIndex="0"
-					role="group"
-					aria-label={ __( 'Brands', 'newspack-multibranded-site' ) }
-				>
-					{ availableTerms.map( term => {
-						return (
-							<div key={ term.id } className="editor-post-taxonomies__hierarchical-terms-choice">
-								<CheckboxControl
-									__nextHasNoMarginBottom
-									checked={ terms.indexOf( term.id ) !== -1 }
-									onChange={ () => {
-										const termId = parseInt( term.id, 10 );
-										onChange( termId );
-									} }
-									label={ decodeEntities( term.name ) }
-								/>
-							</div>
-						);
-					} ) }
+		<Flex direction="column" gap="4">
+			<div
+				className="editor-post-taxonomies__hierarchical-terms-list"
+				tabIndex="0"
+				role="group"
+				aria-label={ __( 'Brands', 'newspack-multibranded-site' ) }
+			>
+				{ terms.length > 1 && (
+					<SelectControl
+						label={ __( 'Primary brand', 'newspack-multibranded-site' ) }
+						value={ currentPrimaryBrand || 0 }
+						options={ [
+							{
+								label: __( 'None', 'newspack-multibranded-site' ),
+								value: 0,
+							},
+							...terms.map( term => getTermSelectOptionFromId( term ) ).filter( term => term ),
+						] }
+						onChange={ onChangePrimaryBrand }
+					/>
+				) }
+			</div>
 
-					{ terms.length > 1 && (
-						<SelectControl
-							label={ __( 'Primary brand', 'newspack-multibranded-site' ) }
-							value={ currentPrimaryBrand || 0 }
-							options={ [
-								{
-									label: __( 'None', 'newspack-multibranded-site' ),
-									value: 0,
-								},
-								...terms.map( term => getTermSelectOptionFromId( term ) ).filter( term => term ),
-							] }
-							onChange={ onChangePrimaryBrand }
-						/>
-					) }
-				</div>
-
-				<FlexItem>
-					<Button href={ ADMIN_URL } variant="link" target="blank">
-						{ __( 'Manage Brands', 'newspack-multibranded-site' ) }
-					</Button>
-				</FlexItem>
-			</Flex>
-		</PluginDocumentSettingPanel>
+			<FlexItem>
+				<Button href={ ADMIN_URL } variant="link" target="blank">
+					{ __( 'Manage Brands', 'newspack-multibranded-site' ) }
+				</Button>
+			</FlexItem>
+		</Flex>
 	);
 };
 
-registerPlugin( 'newspack-multibranded-site-post-brands', {
-	render: NewspackPostPrimaryBrand,
-	icon: null,
-} );
+function customizeSelector( OriginalComponent ) {
+	return function ( props ) {
+		if ( props.slug === TAXONOMY_SLUG ) {
+			return (
+				<div class="newspack-multibranded-site-brand-control">
+					<OriginalComponent { ...props } />
+					<NewspackPostPrimaryBrand { ...props } />
+				</div>
+			);
+		} else {
+			return <OriginalComponent { ...props } />;
+		}
+	};
+}
+wp.hooks.addFilter(
+	'editor.PostTaxonomyType',
+	'newspack/set-custom-term-selector',
+	customizeSelector
+);

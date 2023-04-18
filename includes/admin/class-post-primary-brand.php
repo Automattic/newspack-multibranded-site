@@ -22,6 +22,7 @@ class Post_Primary_Brand {
 	 */
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+		add_filter( 'wpseo_primary_term_taxonomies', array( __CLASS__, 'remove_yoast_primary_term' ) );
 	}
 
 	/**
@@ -41,6 +42,13 @@ class Post_Primary_Brand {
 			true
 		);
 
+		wp_enqueue_style(
+			'newspack-post-primary-brand',
+			plugins_url( '../../dist/postPrimaryBrand.css', __FILE__ ),
+			[],
+			filemtime( NEWSPACK_MULTIBRANDED_SITE_PLUGIN_DIR . '/dist/postPrimaryBrand.js' )
+		);
+
 		wp_localize_script(
 			'newspack-post-primary-brand',
 			'newspackPostPrimaryBrandVars',
@@ -50,6 +58,19 @@ class Post_Primary_Brand {
 				'metaKey'      => Taxonomy::PRIMARY_META_KEY,
 			)
 		);
+	}
+
+	/**
+	 * Removes Brands from the list of taxonomies for which Yoast will add a "primary term" selector.
+	 *
+	 * @param \WP_Taxonomy[] $taxonomies List of taxonomies.
+	 * @return \WP_Taxonomy[]
+	 */
+	public static function remove_yoast_primary_term( $taxonomies ) {
+		if ( ! empty( $taxonomies[ Taxonomy::SLUG ] ) ) {
+			unset( $taxonomies[ Taxonomy::SLUG ] );
+		}
+		return $taxonomies;
 	}
 
 
