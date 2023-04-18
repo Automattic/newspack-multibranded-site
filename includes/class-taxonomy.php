@@ -59,9 +59,6 @@ class Taxonomy {
 	 * @return ?WP_Term The current brand term.
 	 */
 	public static function get_current() {
-		if ( empty( self::$current_brand ) ) {
-			self::determine_current_brand();
-		}
 		return self::$current_brand;
 	}
 
@@ -216,11 +213,12 @@ class Taxonomy {
 	 * @return void
 	 */
 	public static function determine_current_brand() {
-		if ( is_singular() ) {
+		global $wp_query;
+		if ( $wp_query->is_singular() ) {
 			self::$current_brand = self::get_current_brand_for_post( get_queried_object() );
-		} elseif ( is_tax() || is_category() || is_tag() ) {
+		} elseif ( $wp_query->is_tax() || $wp_query->is_category() || $wp_query->is_tag() ) {
 			self::$current_brand = self::get_current_brand_for_term( get_queried_object() );
-		} elseif ( is_author() ) {
+		} elseif ( $wp_query->is_author() ) {
 			self::$current_brand = self::get_current_brand_for_author( get_queried_object_id() );
 		} else {
 			self::$current_brand = null;
