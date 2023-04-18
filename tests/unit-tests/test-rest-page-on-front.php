@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Newspack_Multibranded_Site\Taxonomy;
-use Newspack_Multibranded_Site\Meta\ShowPageOnFront;
+use Newspack_Multibranded_Site\Meta\Show_Page_On_Front;
 
 /**
  * Tests editing the Url metadata from the rest api.
@@ -14,11 +14,11 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_unauthorized() {
 		wp_set_current_user( 0 );
-		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'yes' );
+		$response = $this->dispatch_request_to_edit_termmeta( Show_Page_On_Front::get_key(), 'yes' );
 		$this->assertSame( 401, $response->get_status() );
 
 		wp_set_current_user( $this->secondary_user_id->ID );
-		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'yes' );
+		$response = $this->dispatch_request_to_edit_termmeta( Show_Page_On_Front::get_key(), 'yes' );
 		$this->assertSame( 403, $response->get_status() );
 	}
 
@@ -27,11 +27,11 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_valid_input() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 2 );
+		$response = $this->dispatch_request_to_edit_termmeta( Show_Page_On_Front::get_key(), 2 );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( 2, $data['meta'][ ShowPageOnFront::get_key() ] );
+		$this->assertSame( 2, $data['meta'][ Show_Page_On_Front::get_key() ] );
 	}
 
 	/**
@@ -39,14 +39,14 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_delete() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 2 );
+		$response = $this->dispatch_request_to_edit_termmeta( Show_Page_On_Front::get_key(), 2 );
 
-		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), null );
+		$response = $this->dispatch_request_to_edit_termmeta( Show_Page_On_Front::get_key(), null );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( 0, $data['meta'][ ShowPageOnFront::get_key() ] );
-		$this->assertEmpty( get_term_meta( $this->term1->term_id, ShowPageOnFront::get_key(), true ) );
+		$this->assertSame( 0, $data['meta'][ Show_Page_On_Front::get_key() ] );
+		$this->assertEmpty( get_term_meta( $this->term1->term_id, Show_Page_On_Front::get_key(), true ) );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Test_PageOnFront extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function test_invalid_input() {
 		wp_set_current_user( $this->user_id->ID );
-		$response = $this->dispatch_request_to_edit_termmeta( ShowPageOnFront::get_key(), 'asd' );
+		$response = $this->dispatch_request_to_edit_termmeta( Show_Page_On_Front::get_key(), 'asd' );
 		$data     = $response->get_data();
 		$this->assertSame( 400, $response->get_status() );
 	}

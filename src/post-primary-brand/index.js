@@ -27,23 +27,27 @@ const TAXONOMY_SLUG = newspackPostPrimaryBrandVars.taxonomySlug;
 
 const META_KEY = newspackPostPrimaryBrandVars.metaKey;
 
+const SHOW_PRIMARY_BRAND_FOR = newspackPostPrimaryBrandVars.postTypesWithPrimaryBrand;
+
 /**
  * Adds a primary brand selector to the post editor.
  */
 const NewspackPostPrimaryBrand = ( { slug } ) => {
 	const { editPost } = useDispatch( 'core/editor' );
 
-	const { terms, availableTerms, primaryBrand } = useSelect(
+	const { terms, availableTerms, primaryBrand, postType } = useSelect(
 		select => {
-			const { getEditedPostAttribute } = select( 'core/editor' );
+			const { getEditedPostAttribute, getCurrentPostType } = select( 'core/editor' );
 			const { getTaxonomy, getEntityRecords } = select( coreStore );
 			const _taxonomy = getTaxonomy( slug );
 			const meta = getEditedPostAttribute( 'meta' );
+			const postType = getCurrentPostType();
 
 			return {
 				terms: _taxonomy ? getEditedPostAttribute( _taxonomy.rest_base ) : EMPTY_ARRAY,
 				availableTerms: getEntityRecords( 'taxonomy', slug, DEFAULT_QUERY ) || EMPTY_ARRAY,
 				primaryBrand: meta[ META_KEY ],
+				postType,
 			};
 		},
 		[ slug ]
@@ -58,29 +62,33 @@ const NewspackPostPrimaryBrand = ( { slug } ) => {
 		editPost( { meta: { [ META_KEY ]: termId } } );
 	};
 
+	const shouldDisplayPrimaryBrand = SHOW_PRIMARY_BRAND_FOR.includes( postType );
+
 	return (
 		<Flex direction="column" gap="4">
-			<div
-				className="editor-primary-brand-selector"
-				tabIndex="0"
-				role="group"
-				aria-label={ __( 'Brands', 'newspack-multibranded-site' ) }
-			>
-				{ terms.length > 1 && (
-					<SelectControl
-						label={ __( 'Primary brand', 'newspack-multibranded-site' ) }
-						value={ primaryBrand || 0 }
-						options={ [
-							{
-								label: __( 'None', 'newspack-multibranded-site' ),
-								value: 0,
-							},
-							...terms.map( term => getTermSelectOptionFromId( term ) ).filter( term => term ),
-						] }
-						onChange={ onChangePrimaryBrand }
-					/>
-				) }
-			</div>
+			{ shouldDisplayPrimaryBrand && (
+				<div
+					className="editor-primary-brand-selector"
+					tabIndex="0"
+					role="group"
+					aria-label={ __( 'Brands', 'newspack-multibranded-site' ) }
+				>
+					{ terms.length > 1 && (
+						<SelectControl
+							label={ __( 'Primary brand', 'newspack-multibranded-site' ) }
+							value={ primaryBrand || 0 }
+							options={ [
+								{
+									label: __( 'None', 'newspack-multibranded-site' ),
+									value: 0,
+								},
+								...terms.map( term => getTermSelectOptionFromId( term ) ).filter( term => term ),
+							] }
+							onChange={ onChangePrimaryBrand }
+						/>
+					) }
+				</div>
+			) }
 
 			<FlexItem>
 				<Button href={ ADMIN_URL } variant="link" target="blank">

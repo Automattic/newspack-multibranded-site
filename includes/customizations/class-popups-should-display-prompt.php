@@ -12,7 +12,7 @@ use Newspack_Multibranded_Site\Taxonomy;
 /**
  * Class to handle the Blog Name Customization
  */
-class PopupsShouldDisplayPrompt {
+class Popups_Should_Display_Prompt {
 
 	/**
 	 * Initializes

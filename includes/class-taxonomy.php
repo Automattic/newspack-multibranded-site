@@ -63,6 +63,28 @@ class Taxonomy {
 	}
 
 	/**
+	 * Get the list of post types that the taxonomy should be applied to.
+	 *
+	 * @return array The list of post type slugs.
+	 */
+	public static function get_post_types() {
+		$post_types = self::POST_TYPES;
+		if ( class_exists( 'Newspack_Popups' ) ) {
+			$post_types[] = \Newspack_Popups::NEWSPACK_POPUPS_CPT;
+		}
+		return $post_types;
+	}
+
+	/**
+	 * Get the list of post types that should have a primary brand selector.
+	 *
+	 * @return array The list of post type slugs.
+	 */
+	public static function get_post_types_with_primary_brand() {
+		return self::POST_TYPES;
+	}
+
+	/**
 	 * Registers the taxonomy
 	 *
 	 * @return void
@@ -98,11 +120,11 @@ class Taxonomy {
 				'assign_terms' => 'edit_posts',
 			),
 		);
-		register_taxonomy( self::SLUG, self::POST_TYPES, $params );
+		register_taxonomy( self::SLUG, self::get_post_types(), $params );
 
 		// Initialize metadata.
 		Meta\Url::init();
-		Meta\ShowPageOnFront::init();
+		Meta\Show_Page_On_Front::init();
 		Meta\Post_Primary_Brand::init();
 		Meta\Logo::init();
 		Meta\Theme_Colors::init();

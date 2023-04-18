@@ -6,7 +6,7 @@
  */
 
 use Newspack_Multibranded_Site\Taxonomy;
-use Newspack_Multibranded_Site\Customizations\PopupsShouldDisplayPrompt;
+use Newspack_Multibranded_Site\Customizations\Popups_Should_Display_Prompt;
 
 /**
  * Test the Logo filter.
@@ -17,10 +17,10 @@ class TestCustomizationShouldDisplayPrompt extends WP_UnitTestCase {
 	 * Tests an empty popup
 	 */
 	public function test_empty_popup() {
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [] );
 		$this->assertTrue( $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, 'invalid' );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, 'invalid' );
 		$this->assertTrue( $should_display );
 	}
 
@@ -41,46 +41,46 @@ class TestCustomizationShouldDisplayPrompt extends WP_UnitTestCase {
 
 		// No current brand.
 		$this->go_to( '/' );
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
 		$this->assertEquals( true, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
 		$this->assertEquals( false, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
 		$this->assertEquals( false, $should_display );
 
 		// Brand 1.
 		$this->go_to( get_term_link( $brand1 ) );
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
 		$this->assertEquals( true, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
 		$this->assertEquals( true, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
 		$this->assertEquals( true, $should_display );
 
 		// Brand 2.
 		$this->go_to( get_term_link( $brand2 ) );
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
 		$this->assertEquals( true, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
 		$this->assertEquals( false, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
 		$this->assertEquals( true, $should_display );
 
 		// Brand 3.
 		$this->go_to( get_term_link( $brand3 ) );
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_without_brands->ID ] );
 		$this->assertEquals( true, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_one_brand->ID ] );
 		$this->assertEquals( false, $should_display );
 
-		$should_display = PopupsShouldDisplayPrompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
+		$should_display = Popups_Should_Display_Prompt::filter_should_display( true, [ 'id' => $prompt_with_two_brands->ID ] );
 		$this->assertEquals( false, $should_display );
 	}
 }

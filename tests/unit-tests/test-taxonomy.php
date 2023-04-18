@@ -6,7 +6,7 @@
  */
 
 use Newspack_Multibranded_Site\Taxonomy;
-use Newspack_Multibranded_Site\Meta\ShowPageOnFront;
+use Newspack_Multibranded_Site\Meta\Show_Page_On_Front;
 
 /**
  * Sample test case.
@@ -139,7 +139,7 @@ class TestTaxonomy extends WP_UnitTestCase {
 		add_term_meta( $category_with_brand->term_id, Taxonomy::PRIMARY_META_KEY, $brand1->term_id );
 		add_term_meta( $tag_with_brand->term_id, Taxonomy::PRIMARY_META_KEY, $brand1->term_id );
 
-		add_term_meta( $brand_with_page_on_front->term_id, ShowPageOnFront::get_key(), $page2->ID );
+		add_term_meta( $brand_with_page_on_front->term_id, Show_Page_On_Front::get_key(), $page2->ID );
 
 		// home.
 		$this->go_to( '/' );
