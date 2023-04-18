@@ -10,9 +10,9 @@ namespace Newspack_Multibranded_Site\Meta;
 use Newspack_Multibranded_Site\Meta;
 
 /**
- * Class to handle the ShowPageOnFront Meta
+ * Class to handle the Show_Page_On_Front Meta
  */
-class ShowPageOnFront extends Meta {
+class Show_Page_On_Front extends Meta {
 
 	/**
 	 * Gets the meta key

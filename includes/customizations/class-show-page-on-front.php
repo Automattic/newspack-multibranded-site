@@ -7,13 +7,13 @@
 
 namespace Newspack_Multibranded_Site\Customizations;
 
-use Newspack_Multibranded_Site\Meta\ShowPageOnFront as ShowPageOnFront_Meta;
+use Newspack_Multibranded_Site\Meta\Show_Page_On_Front as Show_Page_On_Front_Meta;
 use Newspack_Multibranded_Site\Taxonomy;
 
 /**
- * Class to handle the ShowPageOnFront Customization
+ * Class to handle the Show_Page_On_Front Customization
  */
-class ShowPageOnFront {
+class Show_Page_On_Front {
 
 	/**
 	 * Whether the query has been filtered in the current request
@@ -50,7 +50,7 @@ class ShowPageOnFront {
 		$term       = get_term_by( 'slug', $brand_slug, Taxonomy::SLUG );
 
 		if ( $term ) {
-			$show_page_on_front = get_term_meta( $term->term_id, ShowPageOnFront_Meta::get_key(), true );
+			$show_page_on_front = get_term_meta( $term->term_id, Show_Page_On_Front_Meta::get_key(), true );
 			if ( ! empty( $show_page_on_front ) ) {
 				$page = get_page( $show_page_on_front );
 				if ( $page ) {
@@ -76,7 +76,7 @@ class ShowPageOnFront {
 			return $classes;
 		}
 
-		$show_page_on_front = get_term_meta( $queried_object->term_id, ShowPageOnFront_Meta::get_key(), true );
+		$show_page_on_front = get_term_meta( $queried_object->term_id, Show_Page_On_Front_Meta::get_key(), true );
 
 		if ( ! $show_page_on_front ) {
 			return $classes;

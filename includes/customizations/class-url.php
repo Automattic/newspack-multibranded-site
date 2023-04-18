@@ -42,8 +42,8 @@ class Url {
 			array(
 				'taxonomy'   => Taxonomy::SLUG,
 				'hide_empty' => false,
-				'meta_key'   => Url_Meta::get_key(),
-				'meta_value' => 'yes',
+				'meta_key'   => Url_Meta::get_key(), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'meta_value' => 'yes', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
 

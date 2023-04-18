@@ -20,12 +20,12 @@ class Initializer {
 		Admin::init();
 
 		Customizations\Url::init();
-		Customizations\ShowPageOnFront::init();
+		Customizations\Show_Page_On_Front::init();
 		Customizations\Logo::init();
 		Customizations\Theme_Colors::init();
 		Customizations\Menus::init();
 		Customizations\Blogname::init();
-		Customizations\PopupsShouldDisplayPrompt::init();
+		Customizations\Popups_Should_Display_Prompt::init();
 	}
 
 }

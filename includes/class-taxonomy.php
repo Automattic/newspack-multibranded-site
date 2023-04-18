@@ -124,7 +124,7 @@ class Taxonomy {
 
 		// Initialize metadata.
 		Meta\Url::init();
-		Meta\ShowPageOnFront::init();
+		Meta\Show_Page_On_Front::init();
 		Meta\Post_Primary_Brand::init();
 		Meta\Logo::init();
 		Meta\Theme_Colors::init();
