@@ -30,7 +30,7 @@ class Post_Primary_Brand {
 	 */
 	public static function enqueue_scripts() {
 		$screen = get_current_screen();
-		if ( 'post' !== $screen->base || ! in_array( $screen->post_type, Taxonomy::POST_TYPES, true ) ) {
+		if ( 'post' !== $screen->base || ! in_array( $screen->post_type, Taxonomy::get_post_types(), true ) ) {
 			return;
 		}
 
@@ -53,9 +53,10 @@ class Post_Primary_Brand {
 			'newspack-post-primary-brand',
 			'newspackPostPrimaryBrandVars',
 			array(
-				'adminURL'     => admin_url( 'admin.php?page=' . Admin::MULTI_BRANDED_PAGE_SLUG ),
-				'taxonomySlug' => Taxonomy::SLUG,
-				'metaKey'      => Taxonomy::PRIMARY_META_KEY,
+				'adminURL'                  => admin_url( 'admin.php?page=' . Admin::MULTI_BRANDED_PAGE_SLUG ),
+				'taxonomySlug'              => Taxonomy::SLUG,
+				'metaKey'                   => Taxonomy::PRIMARY_META_KEY,
+				'postTypesWithPrimaryBrand' => Taxonomy::get_post_types_with_primary_brand(),
 			)
 		);
 	}
