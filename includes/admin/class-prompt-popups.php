@@ -34,7 +34,7 @@ class Prompt_Popups {
 		$asset = require NEWSPACK_MULTIBRANDED_SITE_PLUGIN_DIR . '/dist/promptBrands.asset.php';
 
 		wp_enqueue_script(
-			'newspack-promp-brands',
+			'newspack-prompt-brands',
 			plugins_url( '../../dist/promptBrands.js', __FILE__ ),
 			$asset['dependencies'],
 			$asset['version'],
