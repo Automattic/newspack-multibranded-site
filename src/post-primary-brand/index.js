@@ -81,7 +81,7 @@ const NewspackPostPrimaryBrand = ( { slug } ) => {
 							options={ [
 								{
 									label: __( 'None', 'newspack-multibranded-site' ),
-									value: ZERO,
+									value: 0,
 								},
 								...terms.map( term => getTermSelectOptionFromId( term ) ).filter( term => term ),
 							] }

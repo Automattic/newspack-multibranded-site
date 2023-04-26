@@ -45,15 +45,26 @@ abstract class Meta {
 			},
 		];
 
-		if ( 'term' === static::$type ) {
-			$params['object_subtype'] = static::get_taxonomy();
+		if ( 'post' === static::$type ) {
+			$post_types = Taxonomy::get_post_types();
+			foreach ( $post_types as $post_type ) {
+				$params['object_subtype'] = $post_type;
+				register_meta(
+					'post',
+					static::get_key(),
+					$params
+				);
+			}
+		} else {
+			if ( 'term' === static::$type ) {
+				$params['object_subtype'] = static::get_taxonomy();
+			}
+			register_meta(
+				static::$type,
+				static::get_key(),
+				$params
+			);
 		}
-
-		register_meta(
-			static::$type,
-			static::get_key(),
-			$params
-		);
 	}
 
 	/**
