@@ -162,7 +162,15 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 					return (
 						<Card noBorder key={ color.theme_mod_name }>
 							<ColorPicker
-								label={ color.label }
+								className="newspack-brand__theme-mod-color-picker"
+								label={
+									<Fragment>
+										<span>{ color.label }</span>
+										<Button isLink onClick={ () => setThemeColor( color.theme_mod_name, '#fff' ) }>
+											{ __( 'Reset', 'newspack-multibranded-site' ) }
+										</Button>
+									</Fragment>
+								}
 								color={ getThemeColor( color.theme_mod_name ) }
 								onChange={ newColor => setThemeColor( color.theme_mod_name, newColor ) }
 							/>
