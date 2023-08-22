@@ -35,7 +35,7 @@ class Filter_Posts {
 		}
 
 		$taxonomy_object = get_taxonomy( Taxonomy::SLUG );
-		$selected        = isset( $_GET[ Taxonomy::SLUG ] ) ? $_GET[ Taxonomy::SLUG ] : '';
+		$selected        = isset( $_GET[ Taxonomy::SLUG ] ) ? sanitize_text_field( wp_unslash( $_GET[ Taxonomy::SLUG ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		wp_dropdown_categories(
 			array(
