@@ -31,7 +31,13 @@ class Admin {
 	 * @return void
 	 */
 	public static function add_admin_menu() {
-		$page_suffix = add_menu_page(
+		if ( ! Dependencies::has_dependencies() ) {
+			Dependencies::add_notice();
+			return;
+		}
+
+		$page_suffix = add_submenu_page(
+			'newspack',
 			__( 'Multi-branded site', 'newspack-multibranded-site' ),
 			__( 'Multi-branded site', 'newspack-multibranded-site' ),
 			'manage_options',
