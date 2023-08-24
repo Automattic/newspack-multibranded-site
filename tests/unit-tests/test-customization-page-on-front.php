@@ -22,8 +22,13 @@ class TestCustomizationPageOnFront extends WP_UnitTestCase {
 		add_term_meta( $brand_with_page_on_front->term_id, Show_Page_On_Front_Meta::get_key(), 123 );
 		$this->assertSame( $brand_with_page_on_front->term_id, Show_Page_On_Front::get_brand_page_is_cover_for( 123 ) );
 
+		add_term_meta( $brand_with_page_on_front->term_id, Show_Page_On_Front_Meta::get_key(), 456 );
+		$this->assertSame( $brand_with_page_on_front->term_id, Show_Page_On_Front::get_brand_page_is_cover_for( 456 ) );
+		$this->assertNull( Show_Page_On_Front::get_brand_page_is_cover_for( 123 ) );
+
 		update_term_meta( $brand_with_page_on_front->term_id, Show_Page_On_Front_Meta::get_key(), 0 );
 		$this->assertNull( Show_Page_On_Front::get_brand_page_is_cover_for( 123 ) );
+		$this->assertNull( Show_Page_On_Front::get_brand_page_is_cover_for( 456 ) );
 	}
 
 }

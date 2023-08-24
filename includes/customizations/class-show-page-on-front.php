@@ -9,6 +9,7 @@ namespace Newspack_Multibranded_Site\Customizations;
 
 use Newspack_Multibranded_Site\Meta\Show_Page_On_Front as Show_Page_On_Front_Meta;
 use Newspack_Multibranded_Site\Taxonomy;
+use WP_Term;
 
 /**
  * Class to handle the Show_Page_On_Front Customization
@@ -40,6 +41,7 @@ class Show_Page_On_Front {
 		add_filter( 'template_include', [ __CLASS__, 'template_include' ] );
 		add_action( 'updated_term_meta', [ __CLASS__, 'on_term_meta_update' ], 10, 4 );
 		add_action( 'added_term_meta', [ __CLASS__, 'on_term_meta_update' ], 10, 4 );
+		add_filter( 'page_link', [ __CLASS__, 'filter_page_link' ], 10, 2 );
 	}
 
 	/**
@@ -124,6 +126,27 @@ class Show_Page_On_Front {
 	}
 
 	/**
+	 * Filters the page permalink
+	 *
+	 * @param string $permalink The page permalink.
+	 * @param int    $page_id The page ID.
+	 * @return string
+	 */
+	public static function filter_page_link( $permalink, $page_id ) {
+		$brand_id = self::get_brand_page_is_cover_for( $page_id );
+		if ( ! $brand_id ) {
+			return $permalink;
+		}
+
+		$brand = get_term( $brand_id, Taxonomy::SLUG );
+		if ( ! $brand instanceof WP_Term ) {
+			return $permalink;
+		}
+
+		return get_term_link( $brand, Taxonomy::SLUG );
+	}
+
+	/**
 	 * Gets the front pages option
 	 *
 	 * @return array
@@ -159,15 +182,17 @@ class Show_Page_On_Front {
 		if ( '_show_page_on_front' === $meta_key ) {
 			$front_pages     = self::get_front_pages();
 			$pages_by_brands = array_flip( $front_pages );
-			if ( empty( $meta_value ) && isset( $pages_by_brands[ $object_id ] ) ) {
-				unset( $front_pages[ $pages_by_brands[ $object_id ] ] );
-				self::update_front_pages( $front_pages );
-				return;
+
+			if ( isset( $pages_by_brands[ $object_id ] ) ) {
+				unset( $pages_by_brands[ $object_id ] );
 			}
+
 			if ( ! empty( $meta_value ) ) {
-				$front_pages[ (int) $meta_value ] = (int) $object_id;
-				self::update_front_pages( $front_pages );
+				$pages_by_brands[ $object_id ] = (int) $meta_value;
 			}
+
+			// Doing array_flip twice also ensures an unique page by brand.
+			self::update_front_pages( array_flip( $pages_by_brands ) );
 		}
 	}
 
