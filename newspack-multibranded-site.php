@@ -30,3 +30,12 @@ load_plugin_textdomain( 'newspack-plugin', false, dirname( plugin_basename( __FI
 require_once __DIR__ . '/vendor/autoload.php';
 
 Newspack_Multibranded_Site\Initializer::init();
+
+if ( ! class_exists( 'Newspack\\Updater' ) ) {
+	require_once __DIR__ . '/includes/class-updater.php';
+}
+new Newspack\Updater(
+	'newspack-multibranded-site/newspack-multibranded-site.php',
+	NEWSPACK_MULTIBRANDED_SITE_PLUGIN_FILE,
+	'Automattic/newspack-multibranded-site'
+);
