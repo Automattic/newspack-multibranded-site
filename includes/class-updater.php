@@ -94,7 +94,7 @@ final class Updater {
 		$release_data  = get_transient( $transient_key );
 		if ( false === $release_data ) {
 			$github_data = self::fetch_latest_github_data();
-      $expiration  = 60 * 60 * 12; // 12 hours.
+			$expiration  = 60 * 60 * 12; // 12 hours.
 			if ( $github_data ) {
 				$plugin_data  = \get_plugin_data( $this->plugin_file );
 				$release_data = (object) [
@@ -113,9 +113,9 @@ final class Updater {
 				];
 			} else {
 				$release_data = [];
-				$expiration   = 60 * 5; // 5 minutes.
+				$expiration   = 60; // 1 minute.
 			}
-  		set_transient( $transient_key, $release_data, $expiration );
+			set_transient( $transient_key, $release_data, $expiration );
 		}
 		return $release_data;
 	}
