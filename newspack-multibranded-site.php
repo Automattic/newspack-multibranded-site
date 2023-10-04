@@ -31,11 +31,15 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 Newspack_Multibranded_Site\Initializer::init();
 
-if ( ! class_exists( 'Newspack\\Updater' ) ) {
-	require_once __DIR__ . '/includes/class-updater.php';
-}
-new Newspack\Updater(
-	'newspack-multibranded-site/newspack-multibranded-site.php',
-	NEWSPACK_MULTIBRANDED_SITE_PLUGIN_FILE,
-	'Automattic/newspack-multibranded-site'
+add_action(
+	'plugins_loaded',
+	function() {
+		if ( class_exists( 'Newspack_Manager\\Updater' ) ) {
+			new Newspack_Manager\Updater(
+				'newspack-multibranded-site/newspack-multibranded-site.php',
+				NEWSPACK_MULTIBRANDED_SITE_PLUGIN_FILE,
+				'Automattic/newspack-multibranded-site'
+			);
+		}
+	}
 );
