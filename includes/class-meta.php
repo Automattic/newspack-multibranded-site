@@ -33,6 +33,7 @@ abstract class Meta {
 	 */
 	public static function register_option() {
 		$type   = static::get_schema()['type'] ?? 'string';
+		$cap    = static::get_capability();
 		$params = [
 			'description'   => static::get_description(),
 			'single'        => true,
@@ -40,9 +41,7 @@ abstract class Meta {
 				'schema' => static::get_schema(),
 			],
 			'type'          => $type,
-			'auth_callback' => function() {
-				return current_user_can( 'manage_options' );
-			},
+			'auth_callback' => [ get_called_class(), 'auth_callback' ],
 		];
 
 		if ( 'post' === static::$type ) {
@@ -84,6 +83,39 @@ abstract class Meta {
 	 */
 	public static function get_post_types() {
 		return [];
+	}
+
+	/**
+	 * Returns whether the current user can edit the meta
+	 *
+	 * @param bool   $allowed   Whether the user can add the object meta. Default false.
+	 * @param string $meta_key  The meta key.
+	 * @param int    $object_id Object ID.
+	 * @return bool
+	 */
+	public static function auth_callback( $allowed, $meta_key, $object_id ) {
+		return current_user_can( static::get_capability(), $object_id );
+	}
+
+	/**
+	 * Returns the capability needed to edit the meta
+	 *
+	 * @return string
+	 */
+	public static function get_capability() {
+		if ( 'post' === static::$type ) {
+			return 'edit_post'; // singular, to check meta cap against the post id.
+		}
+		if ( 'term' === static::$type ) {
+			$tax_object = get_taxonomy( static::get_taxonomy() );
+			return $tax_object->cap->manage_terms;
+		}
+		if ( 'user' === static::$type ) {
+			return 'edit_users';
+		}
+
+		// default to manage_options, but this should never happen.
+		return 'manage_options';
 	}
 
 	/**

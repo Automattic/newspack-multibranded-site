@@ -65,6 +65,18 @@ class Newspack_Multibranded_Rest_Testcase extends WP_UnitTestCase {
 			)
 		);
 
+		$this->author = $this->factory->user->create_and_get(
+			array(
+				'role' => 'author',
+			)
+		);
+
+		$this->subscriber = $this->factory->user->create_and_get(
+			array(
+				'role' => 'subscriber',
+			)
+		);
+
 		$this->term1 = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
 	}
 
