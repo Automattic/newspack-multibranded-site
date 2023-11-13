@@ -21,7 +21,8 @@ class Test_Rest_Post_Primary_Brand extends Newspack_Multibranded_Rest_Testcase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->post = $this->factory->post->create_and_get();
+		$this->post           = $this->factory->post->create_and_get();
+		$this->post_by_author = $this->factory->post->create_and_get( [ 'post_author' => $this->author->ID ] );
 	}
 
 	/**
@@ -32,9 +33,28 @@ class Test_Rest_Post_Primary_Brand extends Newspack_Multibranded_Rest_Testcase {
 		$response = $this->dispatch_request_to_edit_postmeta( $this->post->ID, Taxonomy::PRIMARY_META_KEY, 123 );
 		$this->assertSame( 401, $response->get_status() );
 
-		wp_set_current_user( $this->secondary_user_id->ID );
+		wp_set_current_user( $this->author->ID );
 		$response = $this->dispatch_request_to_edit_postmeta( $this->post->ID, Taxonomy::PRIMARY_META_KEY, 123 );
 		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * Test with permissions
+	 */
+	public function test_authorized() {
+		wp_set_current_user( $this->secondary_user_id->ID );
+		$response = $this->dispatch_request_to_edit_postmeta( $this->post_by_author->ID, Taxonomy::PRIMARY_META_KEY, 123 );
+		$this->assertSame( 200, $response->get_status() );
+
+		wp_set_current_user( $this->author->ID );
+		$response = $this->dispatch_request_to_edit_postmeta( $this->post_by_author->ID, Taxonomy::PRIMARY_META_KEY, 123 );
+		$this->assertSame( 200, $response->get_status(), 'Authors have permission to edit their own posts' );
+
+		wp_set_current_user( $this->secondary_user_id->ID );
+		$response = $this->dispatch_request_to_edit_postmeta( $this->post->ID, Taxonomy::PRIMARY_META_KEY, 123 );
+		$this->assertSame( 200, $response->get_status(), 'Editors have permission to edit other posts' );
+		$response = $this->dispatch_request_to_edit_postmeta( $this->post_by_author->ID, Taxonomy::PRIMARY_META_KEY, 123 );
+		$this->assertSame( 200, $response->get_status(), 'Editors have permission to edit other posts' );
 	}
 
 	/**
