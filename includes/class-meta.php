@@ -33,7 +33,6 @@ abstract class Meta {
 	 */
 	public static function register_option() {
 		$type   = static::get_schema()['type'] ?? 'string';
-		$cap    = static::get_capability();
 		$params = [
 			'description'   => static::get_description(),
 			'single'        => true,
