@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Newspack Multi-branded site
  * Description: A plugin to allow your site to host multiple brands
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Automattic
  * Author URI: https://newspack.com/
  * License: GPL3
@@ -30,3 +30,16 @@ load_plugin_textdomain( 'newspack-plugin', false, dirname( plugin_basename( __FI
 require_once __DIR__ . '/vendor/autoload.php';
 
 Newspack_Multibranded_Site\Initializer::init();
+
+add_action(
+	'plugins_loaded',
+	function() {
+		if ( class_exists( 'Newspack_Manager\\Updater' ) ) {
+			new Newspack_Manager\Updater(
+				'newspack-multibranded-site/newspack-multibranded-site.php',
+				NEWSPACK_MULTIBRANDED_SITE_PLUGIN_FILE,
+				'Automattic/newspack-multibranded-site'
+			);
+		}
+	}
+);

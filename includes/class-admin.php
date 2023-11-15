@@ -24,6 +24,7 @@ class Admin {
 		Admin\Post_Primary_Brand::init();
 		Admin\Prompt_Popups::init();
 		Admin\Show_Page_On_Front::init();
+		Admin\Filter_Posts::init();
 	}
 
 	/**
@@ -127,7 +128,7 @@ class Admin {
 			),
 			'homepage'       => get_edit_post_link( get_option( 'page_on_front', false ) ),
 			'site'           => get_site_url(),
-			'support'        => esc_url( 'https://newspack.com/support/' ),
+			'support'        => esc_url( 'https://help.newspack.com/' ),
 			'support_email'  => $support_email,
 		);
 
