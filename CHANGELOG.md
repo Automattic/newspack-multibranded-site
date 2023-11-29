@@ -1,3 +1,12 @@
+# [1.1.0](https://github.com/Automattic/newspack-multibranded-site/compare/v1.0.1...v1.1.0) (2023-11-29)
+
+
+### Features
+
+* add auto updater ([#31](https://github.com/Automattic/newspack-multibranded-site/issues/31)) ([86bf6a3](https://github.com/Automattic/newspack-multibranded-site/commit/86bf6a3c8d1f659c4f92bc8d5dd307a061bd6074))
+* change menu position ([0e46fbf](https://github.com/Automattic/newspack-multibranded-site/commit/0e46fbfc8f40251dc927744862ef07e7d1532516))
+* filter posts by brand in admin ([#28](https://github.com/Automattic/newspack-multibranded-site/issues/28)) ([9094911](https://github.com/Automattic/newspack-multibranded-site/commit/9094911de161628deb823e668eb814c4610f6074))
+
 ## [1.0.1](https://github.com/Automattic/newspack-multibranded-site/compare/v1.0.0...v1.0.1) (2023-10-11)
 
 
