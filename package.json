@@ -24,7 +24,7 @@
 		"format:scss": "prettier --write '**/*.scss'",
 		"lint:scss:staged": "stylelint --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
 		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-multibranded-site --exclude-from='./.distignore' && cd release && zip -r newspack-multibranded-site.zip newspack-multibranded-site",
-		"release": "npm run semantic-release",
+		"release": "npm run build && npm run semantic-release",
 		"postinstall": "rm -rf node_modules/newspack-scripts/node_modules/prettier"
 	},
 	"lint-staged": {
