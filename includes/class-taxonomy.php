@@ -174,6 +174,14 @@ class Taxonomy {
 				}
 			}
 		}
+
+		$categories = wp_get_post_categories( $post->ID );
+		foreach ( $categories as $category ) {
+			$category_brand = self::get_current_brand_for_term( $category );
+			if ( $category_brand ) {
+				return $category_brand;
+			}
+		}
 	}
 
 	/**
