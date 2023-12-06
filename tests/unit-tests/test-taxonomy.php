@@ -57,6 +57,27 @@ class TestTaxonomy extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test fallback logic for posts that are in a branded category but don't have a brand assigned.
+	 */
+	public function test_get_current_brand_for_post_fallback() {
+		$brand = $this->factory->term->create_and_get( array( 'taxonomy' => Taxonomy::SLUG ) );
+
+		$category_with_brand = $this->factory->term->create_and_get( array( 'taxonomy' => 'category' ) );
+		add_term_meta( $category_with_brand->term_id, Taxonomy::PRIMARY_META_KEY, $brand->term_id );
+
+		$category_without_brand = $this->factory->term->create_and_get( array( 'taxonomy' => 'category' ) );
+
+		$post = $this->factory->post->create_and_get( array( 'post_title' => 'Post 1' ) );
+		wp_set_post_categories( $post->ID, [ $category_with_brand->term_id ] );
+
+		$post2 = $this->factory->post->create_and_get( array( 'post_title' => 'Post 2' ) );
+		wp_set_post_categories( $post2->ID, [ $category_without_brand->term_id ] );
+
+		$this->assertSame( $brand->term_id, Taxonomy::get_current_brand_for_post( $post->ID )->term_id, 'Related brand should be returned for posts in a branded category that are not explicitly branded' );
+		$this->assertSame( null, Taxonomy::get_current_brand_for_post( $post2->ID ), 'Null should be returned for unbranded posts in an unbranded category' );
+	}
+
+	/**
 	 * Test get_current_brand_for_term
 	 */
 	public function test_get_current_brand_for_term() {
