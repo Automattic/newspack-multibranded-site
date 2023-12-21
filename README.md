@@ -1,3 +1,3 @@
-# Newspack Multi-branded Site plugin
+# Newspack Multibranded Site plugin
 
-A plugin to allow your site to host multiple brands
+Brand different content and sections of your site with unique colors and navigation.
