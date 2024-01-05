@@ -1,6 +1,6 @@
 <?php
 /**
- * Newspack Multi-branded site plugin administration screen handling.
+ * Newspack Multibranded site plugin administration screen handling.
  *
  * @package Newspack
  */
@@ -36,8 +36,8 @@ class Admin {
 		if ( class_exists( 'Newspack\Newspack' ) ) {
 			$page_suffix = add_submenu_page(
 				'newspack',
-				__( 'Multi-branded site', 'newspack-multibranded-site' ),
-				__( 'Multi-branded site', 'newspack-multibranded-site' ),
+				__( 'Multibranded site', 'newspack-multibranded-site' ),
+				__( 'Multibranded site', 'newspack-multibranded-site' ),
 				'manage_options',
 				self::MULTI_BRANDED_PAGE_SLUG,
 				array( __CLASS__, 'render_page' )
@@ -45,8 +45,8 @@ class Admin {
 		} else {
 			$icon        = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjE4cHgiIGhlaWdodD0iNjE4cHgiIHZpZXdCb3g9IjAgMCA2MTggNjE4IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPHBhdGggZD0iTTMwOSwwIEM0NzkuNjU2NDk1LDAgNjE4LDEzOC4zNDQyOTMgNjE4LDMwOS4wMDE3NTkgQzYxOCw0NzkuNjU5MjI2IDQ3OS42NTY0OTUsNjE4IDMwOSw2MTggQzEzOC4zNDM1MDUsNjE4IDAsNDc5LjY1OTIyNiAwLDMwOS4wMDE3NTkgQzAsMTM4LjM0NDI5MyAxMzguMzQzNTA1LDAgMzA5LDAgWiBNMTc0LDE3MSBMMTc0LDI2Mi42NzEzNTYgTDE3NS4zMDUsMjY0IEwxNzQsMjY0IEwxNzQsNDQ2IEwyNDEsNDQ2IEwyNDEsMzMwLjkxMyBMMzUzLjk5Mjk2Miw0NDYgTDQ0NCw0NDYgTDE3NCwxNzEgWiBNNDQ0LDI5OSBMMzg5LDI5OSBMNDEwLjQ3NzYxLDMyMSBMNDQ0LDMyMSBMNDQ0LDI5OSBaIE00NDQsMjM1IEwzMjcsMjM1IEwzNDguMjQ1OTE5LDI1NyBMNDQ0LDI1NyBMNDQ0LDIzNSBaIE00NDQsMTcxIEwyNjQsMTcxIEwyODUuMjkwNTEyLDE5MyBMNDQ0LDE5MyBMNDQ0LDE3MSBaIiBpZD0iQ29tYmluZWQtU2hhcGUiIGZpbGw9IiMyQTdERTEiPjwvcGF0aD4KICAgIDwvZz4KPC9zdmc+';
 			$page_suffix = add_menu_page(
-				__( 'Multi-branded site', 'newspack-multibranded-site' ),
-				__( 'Multi-branded site', 'newspack-multibranded-site' ),
+				__( 'Multibranded site', 'newspack-multibranded-site' ),
+				__( 'Multibranded site', 'newspack-multibranded-site' ),
 				'manage_options',
 				self::MULTI_BRANDED_PAGE_SLUG,
 				array( __CLASS__, 'render_page' ),
