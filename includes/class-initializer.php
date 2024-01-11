@@ -1,6 +1,6 @@
 <?php
 /**
- * Newspack Multi-branded site plugin initialization.
+ * Newspack Multibranded site plugin initialization.
  *
  * @package Newspack
  */

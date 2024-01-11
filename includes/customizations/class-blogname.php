@@ -1,6 +1,6 @@
 <?php
 /**
- * Newspack Multi-branded site taxonomy.
+ * Newspack Multibranded site taxonomy.
  *
  * @package Newspack
  */

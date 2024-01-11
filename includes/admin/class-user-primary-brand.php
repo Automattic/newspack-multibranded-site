@@ -59,7 +59,7 @@ class User_Primary_Brand {
 		?>
 		<div class="newspack-multibranded-site-options">
 		<?php \wp_nonce_field( 'newspack_multibranded_site', 'newspack_multibranded_site_nonce' ); ?>
-			<h2><?php echo esc_html__( 'Multi-branded site Options', 'newspack-multibranded-site' ); ?></h2>
+			<h2><?php echo esc_html__( 'Multibranded site Options', 'newspack-multibranded-site' ); ?></h2>
 			<?php echo esc_html__( 'The user primary brand defines what brand will be applied to the user\'s archive.', 'newspack-multibranded-site' ); ?>
 			<table class="form-table" role="presentation">
 				<tr class="user-<?php echo esc_attr( Meta::get_key() ); ?>-wrap">

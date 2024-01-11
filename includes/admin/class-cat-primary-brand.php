@@ -52,7 +52,7 @@ class Cat_Primary_Brand {
 					<?php endforeach; ?>
 				</select>
 				<p class="description" id="<?php echo esc_attr( Taxonomy::PRIMARY_META_KEY ); ?>-description">
-					<?php echo esc_html__( 'The primary brand defines what brand will be applied to the term\'s archive. (added by Newspack Multi-branded site)', 'newspack-multibranded-site' ); ?>
+					<?php echo esc_html__( 'The primary brand defines what brand will be applied to the term\'s archive. (added by Newspack Multibranded site)', 'newspack-multibranded-site' ); ?>
 				</p>
 			</td>
 		</tr>
