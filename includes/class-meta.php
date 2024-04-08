@@ -1,6 +1,6 @@
 <?php
 /**
- * Newspack Multi-branded site term meta parent class.
+ * Newspack Multibranded site term meta parent class.
  *
  * @package Newspack
  */
@@ -8,7 +8,7 @@
 namespace Newspack_Multibranded_Site;
 
 /**
- * Newspack Multi-branded site meta parent class
+ * Newspack Multibranded site meta parent class
  */
 abstract class Meta {
 

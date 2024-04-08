@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Newspack Multi-branded site
- * Description: A plugin to allow your site to host multiple brands
- * Version: 1.2.0
+ * Plugin Name: Newspack Multibranded Site
+ * Description: Brand different content and sections of your site with unique colors and navigation.
+ * Version: 1.3.0-alpha.1
  * Author: Automattic
  * Author URI: https://newspack.com/
  * License: GPL3
