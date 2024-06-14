@@ -2,6 +2,7 @@
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 /* eslint-disable import/no-nodejs-modules */
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 /**
  * External dependencies
@@ -17,10 +18,8 @@ const postPrimaryBrand = path.join( __dirname, 'src/post-primary-brand' );
 const promptBrands = path.join( __dirname, 'src/prompt-brands' );
 
 const webpackConfig = getBaseWebpackConfig(
-	{ WP: true },
 	{
 		entry: { admin, postPrimaryBrand, promptBrands },
-		'output-path': path.join( __dirname, 'dist' ),
 	}
 );
 

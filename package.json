@@ -17,12 +17,12 @@
 		"lint:php": "./vendor/bin/phpcs .",
 		"format:php": "./vendor/bin/phpcbf .",
 		"lint:php:staged": "./vendor/bin/phpcs",
-		"lint:js": "eslint --ext .js,.jsx src",
-		"lint:js:staged": "eslint --ext .js,.jsx",
-		"format:js": "prettier 'src/**/*.{js,jsx}' --write",
-		"lint:scss": "stylelint '**/*.scss' --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
-		"format:scss": "prettier --write '**/*.scss'",
-		"lint:scss:staged": "stylelint --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
+		"lint:js": "newspack-scripts eslint 'src/**/*.{js,jsx,ts,tsx}'",
+		"lint:js:staged": "newspack-scripts eslint --ext .js,.jsx,.ts,.tsx",
+		"fix:js": "newspack-scripts eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
+		"lint:scss": "newspack-scripts stylelint '**/*.scss' --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
+		"lint:scss:staged": "newspack-scripts stylelint --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
+		"format:scss": "npx prettier --write '**/*.scss'",
 		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-multibranded-site --exclude-from='./.distignore' && cd release && zip -r newspack-multibranded-site.zip newspack-multibranded-site",
 		"release": "npm run build && npm run semantic-release",
 		"postinstall": "rm -rf node_modules/newspack-scripts/node_modules/prettier"
@@ -39,15 +39,12 @@
 		"react-router-dom": "^6.9.0"
 	},
 	"devDependencies": {
-		"@babel/plugin-transform-runtime": "^7.17.0",
-		"@babel/preset-env": "^7.16.11",
-		"@rushstack/eslint-patch": "^1.1.0",
-		"eslint": "^7.29.0",
-		"lint-staged": "^13.2.0",
-		"newspack-scripts": "^5.3.0",
-		"postcss-scss": "^4.0.6",
-		"prettier": "npm:wp-prettier@^2.2.1-beta-1",
-		"stylelint": "^16.2.1"
+		"@rushstack/eslint-patch": "^1.10.3",
+		"@wordpress/browserslist-config": "^6.0.0",
+		"eslint": "^8.57.0",
+		"lint-staged": "^15.2.0",
+		"newspack-scripts": "file:~/Repositories/newspack-scripts",
+		"postcss-scss": "^4.0.9"
 	},
 	"repository": {
 		"type": "git",
