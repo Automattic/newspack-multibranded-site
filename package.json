@@ -9,23 +9,21 @@
 	"scripts": {
 		"cm": "git-cz",
 		"semantic-release": "newspack-scripts release --files=newspack-multibranded-site.php",
-		"build": "newspack-scripts build",
-		"start": "npm ci && newspack-scripts watch",
-		"watch": "newspack-scripts watch",
+		"start": "npm ci && npm run watch",
+		"build": "newspack-scripts wp-scripts build",
+		"watch": "newspack-scripts wp-scripts start",
 		"test": "newspack-scripts test",
 		"lint": "npm run lint:scss && npm run lint:js",
-		"lint:php": "./vendor/bin/phpcs .",
-		"format:php": "./vendor/bin/phpcbf .",
-		"lint:php:staged": "./vendor/bin/phpcs",
-		"lint:js": "newspack-scripts eslint 'src/**/*.{js,jsx,ts,tsx}'",
-		"lint:js:staged": "newspack-scripts eslint --ext .js,.jsx,.ts,.tsx",
-		"fix:js": "newspack-scripts eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-		"lint:scss": "newspack-scripts stylelint '**/*.scss' --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
-		"lint:scss:staged": "newspack-scripts stylelint --customSyntax postcss-scss --config=./node_modules/newspack-scripts/config/stylelint.config.js",
-		"format:scss": "npx prettier --write '**/*.scss'",
-		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-multibranded-site --exclude-from='./.distignore' && cd release && zip -r newspack-multibranded-site.zip newspack-multibranded-site",
+		"lint:js": "newspack-scripts wp-scripts lint-js '**/{src,includes}/**/*.{js,jsx,ts,tsx}'",
+		"lint:js:staged": "newspack-scripts wp-scripts lint-js --ext .js,.jsx,.ts,.tsx",
+		"format:js": "newspack-scripts wp-scripts format '**/{src,includes}/**/*.{js,jsx,ts,tsx}'",
+		"lint:php:staged": "./vendor/bin/phpcs --filter=GitStaged",
+		"lint:scss": "newspack-scripts wp-scripts lint-style '**/{src,includes}/**/*.scss' --customSyntax postcss-scss",
+		"lint:scss:staged": "newspack-scripts wp-scripts lint-style --customSyntax postcss-scss",
+		"format:scss": "newspack-scripts wp-scripts lint-style '**/{src,includes}/**/*.scss' --customSyntax postcss-scss --fix",
+		"typescript:check": "newspack-scripts typescript-check",
 		"release": "npm run build && npm run semantic-release",
-		"postinstall": "rm -rf node_modules/newspack-scripts/node_modules/prettier"
+		"release:archive": "rm -rf release && mkdir -p release && rsync -r . ./release/newspack-multibranded-site --exclude-from='./.distignore' && cd release && zip -r newspack-multibranded-site.zip newspack-multibranded-site"
 	},
 	"lint-staged": {
 		"*.scss": "npm run lint:scss:staged",
@@ -33,7 +31,7 @@
 		"*.php": "npm run lint:php:staged"
 	},
 	"dependencies": {
-		"newspack-components": "^2",
+		"newspack-components": "^2.2.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.9.0"
@@ -43,7 +41,7 @@
 		"@wordpress/browserslist-config": "^6.0.0",
 		"eslint": "^8.57.0",
 		"lint-staged": "^15.2.0",
-		"newspack-scripts": "file:~/Repositories/newspack-scripts",
+		"newspack-scripts": "^5.6.0-alpha.3",
 		"postcss-scss": "^4.0.9"
 	},
 	"repository": {
