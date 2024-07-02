@@ -28,5 +28,4 @@ class Initializer {
 		Customizations\Popups_Should_Display_Prompt::init();
 		Customizations\Body_Class::init();
 	}
-
 }
