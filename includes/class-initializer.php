@@ -29,5 +29,4 @@ class Initializer {
 		Customizations\Body_Class::init();
 		Integrations\Google_Analytics::init();
 	}
-
 }
