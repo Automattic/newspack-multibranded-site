@@ -32,5 +32,4 @@ class Google_Analytics {
 		$params['brand'] = $brand->name;
 		return $params;
 	}
-
 }
