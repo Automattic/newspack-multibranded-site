@@ -112,7 +112,7 @@ const Brand = ( { brands = [], saveBrand, fetchLogoAttachment } ) => {
 		} );
 	};
 
-	const baseUrl = `${ newspack_urls.site }/${ 'no' === brand.meta._custom_url ? 'brand/' : '' }`;
+	const baseUrl = `${ newspack_aux_data.site }/${ 'no' === brand.meta._custom_url ? 'brand/' : '' }`;
 
 	const fetchPublicPages = () => {
 		// Limiting to 100 pages, just in case.
