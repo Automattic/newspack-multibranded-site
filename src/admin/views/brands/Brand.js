@@ -1,3 +1,5 @@
+/* global newspack_aux_data */
+
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs, cleanForSlug } from '@wordpress/url';
 import { Fragment, useState, useEffect } from '@wordpress/element';
