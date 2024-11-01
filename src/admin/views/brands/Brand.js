@@ -1,6 +1,7 @@
 /* global newspack_aux_data */
 
 import apiFetch from '@wordpress/api-fetch';
+import { RadioControl } from '@wordpress/components';
 import { addQueryArgs, cleanForSlug } from '@wordpress/url';
 import { Fragment, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -15,7 +16,6 @@ import {
 	ImageUpload,
 	ColorPicker,
 	SelectControl,
-	RadioControl,
 	withWizardScreen,
 	hooks,
 } from 'newspack-components';
