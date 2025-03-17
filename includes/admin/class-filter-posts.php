@@ -34,6 +34,11 @@ class Filter_Posts {
 			return;
 		}
 
+		// If we have no brands or no posts with a brand, then don't show the dropdown.
+		if ( ! wp_count_terms( array( 'taxonomy' => Taxonomy::SLUG, 'hide_empty' => true ) ) ) {
+			return;
+		}
+
 		$taxonomy_object = get_taxonomy( Taxonomy::SLUG );
 		$selected        = isset( $_GET[ Taxonomy::SLUG ] ) ? sanitize_text_field( wp_unslash( $_GET[ Taxonomy::SLUG ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
