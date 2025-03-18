@@ -34,14 +34,14 @@ class Filter_Posts {
 			return;
 		}
 
-		$num_posts_w_brand = wp_count_terms(
+		$num_posts_with_brand = wp_count_terms(
 			[
 				'taxonomy'   => Taxonomy::SLUG,
 				'hide_empty' => true,
 			]
 		);
 		// If we have no brands or no posts with a brand, then don't show the dropdown.
-		if ( $num_posts_w_brand < 1 ) {
+		if ( $num_posts_with_brand < 1 ) {
 			return;
 		}
 
