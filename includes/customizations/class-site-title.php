@@ -18,7 +18,7 @@ class Site_Title {
 	 * Initialization.
 	 */
 	public static function init() {
-		add_filter( 'custom_site_tile_url', [ __CLASS__, 'filter_site_url' ] );
+		add_filter( 'newspack_site_title_url', [ __CLASS__, 'filter_site_url' ] );
 	}
 
 	/**
