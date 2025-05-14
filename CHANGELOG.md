@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/Automattic/newspack-multibranded-site/compare/v2.0.4...v2.0.5) (2025-05-14)
+
+
+### Bug Fixes
+
+* force alpha build ([1e2b0de](https://github.com/Automattic/newspack-multibranded-site/commit/1e2b0de184ed8326906b893076f6256865f3d70c))
+
 ## [2.0.4](https://github.com/Automattic/newspack-multibranded-site/compare/v2.0.3...v2.0.4) (2025-03-31)
 
 
