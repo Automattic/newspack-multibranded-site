@@ -44,6 +44,13 @@ class Taxonomy {
 	const PRIMARY_META_KEY = '_primary_brand';
 
 	/**
+	 * The query string parameter used for brand overrides.
+	 *
+	 * @var string
+	 */
+	const BRAND_QUERY_PARAM = 'brand';
+
+	/**
 	 * The current brand, determined depending on the context on WP initiazliation.
 	 *
 	 * @var ?WP_Term
@@ -136,12 +143,13 @@ class Taxonomy {
 	 * If a post has is of a supported post type and has only one brand, it will return this brand, otherwise it will return null.
 	 *
 	 * @param int|WP_Post $post_or_post_id The Post object or the post id.
+	 * @param ?WP_Term    $brand_override  Optional brand to override with, if it's one of the post's brands.
 	 * @return ?WP_Term The current brand for the post.
 	 */
-	public static function get_current_brand_for_post( $post_or_post_id ) {
+	public static function get_current_brand_for_post( $post_or_post_id, $brand_override = null ) {
 		// Account for Brands with page on front.
 		if ( $post_or_post_id instanceof WP_Term ) {
-			return self::get_current_brand_for_term( $post_or_post_id );
+			return self::get_current_brand_for_term( $post_or_post_id, $brand_override );
 		}
 
 		$post = $post_or_post_id instanceof \WP_Post ? $post_or_post_id : get_post( $post_or_post_id );
@@ -150,21 +158,37 @@ class Taxonomy {
 			return;
 		}
 
-		// Check if post is assigned to only one brand.
+		// Get all brands for the post.
 		$terms = wp_get_post_terms( $post->ID, self::SLUG );
 
+		// If post has only one brand, always respect that brand.
 		if ( 1 === count( $terms ) ) {
 			return $terms[0];
 		}
 
-		// Check if post has a primary brand.
-		$post_primary_brand = get_post_meta( $post->ID, self::PRIMARY_META_KEY, true );
-
-		if ( $post_primary_brand ) {
-			$term = get_term( $post_primary_brand, self::SLUG );
-			if ( $term instanceof WP_Term ) {
-				return $term;
+		// If post has multiple brands, handle brand override and primary brand.
+		if ( count( $terms ) > 1 ) {
+			// If we have a brand override and it's one of the post's brands, use it.
+			if ( $brand_override ) {
+				foreach ( $terms as $term ) {
+					if ( $term->term_id === $brand_override->term_id ) {
+						return $brand_override;
+					}
+				}
 			}
+
+			// Check if post has a primary brand.
+			$post_primary_brand = get_post_meta( $post->ID, self::PRIMARY_META_KEY, true );
+
+			if ( $post_primary_brand ) {
+				$term = get_term( $post_primary_brand, self::SLUG );
+				if ( $term instanceof WP_Term ) {
+					return $term;
+				}
+			}
+
+			// Multiple brands without primary or valid override.
+			return;
 		}
 
 		// Check if post is a cover page for a brand.
@@ -182,7 +206,8 @@ class Taxonomy {
 		$categories     = wp_get_post_categories( $post->ID );
 		$category_brand = null;
 		foreach ( $categories as $category ) {
-			$brand = self::get_current_brand_for_term( $category );
+			// Only pass the override if the post has brands.
+			$brand = self::get_current_brand_for_term( $category, count( $terms ) ? $brand_override : null );
 			if ( $brand ) {
 				if ( ! $category_brand || $category_brand->term_id === $brand->term_id ) {
 					$category_brand = $brand;
@@ -200,60 +225,93 @@ class Taxonomy {
 	/**
 	 * Get the current brand based on a term.
 	 *
-	 * If a term is a brand, it will return this brand
+	 * If a term is a brand, it will return this brand.
 	 *
 	 * @param int|WP_Term $term_or_term_id The Term object or the term id.
-	 * @return ?WP_Term The current brand for the post.
+	 * @param ?WP_Term    $brand_override  Optional brand to override with.
+	 * @return ?WP_Term The current brand for the term.
 	 */
-	public static function get_current_brand_for_term( $term_or_term_id ) {
+	public static function get_current_brand_for_term( $term_or_term_id, $brand_override = null ) {
 		$term = $term_or_term_id instanceof WP_Term ? $term_or_term_id : get_term( $term_or_term_id );
+
 		if ( self::SLUG === $term->taxonomy ) {
 			return $term;
 		}
+
 		if ( in_array( $term->taxonomy, [ 'category', 'post_tag' ], true ) ) {
-			return self::recursive_search_term_primary_brand( $term );
+			return self::recursive_search_term_primary_brand( $term, $brand_override );
 		}
 	}
 
 	/**
 	 * Finds the primary brand for a term, searching recursively through ancestors.
 	 *
-	 * @param WP_Term $term The Term.
+	 * @param WP_Term  $term           The Term.
+	 * @param ?WP_Term $brand_override Optional brand to override with.
 	 * @return ?WP_Term The primary brand for the term.
 	 */
-	protected static function recursive_search_term_primary_brand( WP_Term $term ) {
+	protected static function recursive_search_term_primary_brand( WP_Term $term, $brand_override = null ) {
 		$primary_brand = get_term_meta( $term->term_id, self::PRIMARY_META_KEY, true );
 		if ( $primary_brand ) {
 			$brand = get_term( $primary_brand, self::SLUG );
-			if ( $brand instanceof WP_Term ) {
-				return $brand;
-			}
+			return ( $brand instanceof WP_Term ) ? $brand : null;
 		}
+
 		if ( $term->parent ) {
 			$parent = get_term( $term->parent, $term->taxonomy );
 			if ( $parent instanceof WP_Term ) {
-				return self::recursive_search_term_primary_brand( $parent );
+				$result = self::recursive_search_term_primary_brand( $parent, $brand_override );
+				if ( $result ) {
+					return $result;
+				}
 			}
 		}
+
+		return $brand_override;
 	}
 
 	/**
 	 * Get the current brand based on an author.
 	 *
-	 * If the author has a custom primary brand, it will return this brand
+	 * If the author has a primary brand, it will return this brand.
 	 *
-	 * @param int $author_id The author ID.
-	 * @return ?WP_Term The current brand for the post.
+	 * @param int      $author_id      The author ID.
+	 * @param ?WP_Term $brand_override Optional brand to override with.
+	 * @return ?WP_Term The current brand for the author.
 	 */
-	public static function get_current_brand_for_author( $author_id ) {
+	public static function get_current_brand_for_author( $author_id, $brand_override = null ) {
 		$author_brand = get_user_meta( $author_id, self::PRIMARY_META_KEY, true );
-		if ( ! $author_brand ) {
-			return;
+
+		if ( $author_brand ) {
+			$brand = get_term( $author_brand, self::SLUG );
+			return ( $brand instanceof WP_Term ) ? $brand : null;
 		}
-		$brand = get_term( $author_brand, self::SLUG );
-		if ( $brand instanceof WP_Term ) {
-			return $brand;
+
+		return $brand_override;
+	}
+
+	/**
+	 * Get brand override from URL query parameter if present and valid.
+	 *
+	 * @return \WP_Term|null The brand term if a valid brand override is found in the URL, null otherwise.
+	 */
+	private static function get_brand_override() {
+		if ( ! isset( $_GET[ self::BRAND_QUERY_PARAM ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return null;
 		}
+
+		$brand_slug = sanitize_text_field( wp_unslash( $_GET[ self::BRAND_QUERY_PARAM ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$term       = get_term_by( 'slug', $brand_slug, self::SLUG );
+
+		/**
+		 * Filters the brand override term retrieved from the URL query parameter.
+		 *
+		 * Allows custom logic to modify or replace the brand override term before it's used
+		 * in brand resolution logic. Return null to disable the override.
+		 *
+		 * @param ?\WP_Term $brand_override The brand term retrieved by slug from the URL, or null if not valid.
+		 */
+		return apply_filters( 'newspack_brand_override', $term instanceof \WP_Term ? $term : null );
 	}
 
 	/**
@@ -263,12 +321,15 @@ class Taxonomy {
 	 */
 	public static function determine_current_brand() {
 		global $wp_query;
+
+		$brand_override = self::get_brand_override();
+
 		if ( $wp_query->is_singular() ) {
-			self::$current_brand = self::get_current_brand_for_post( get_queried_object() );
+			self::$current_brand = self::get_current_brand_for_post( get_queried_object(), $brand_override );
 		} elseif ( $wp_query->is_tax() || $wp_query->is_category() || $wp_query->is_tag() ) {
-			self::$current_brand = self::get_current_brand_for_term( get_queried_object() );
+			self::$current_brand = self::get_current_brand_for_term( get_queried_object(), $brand_override );
 		} elseif ( $wp_query->is_author() ) {
-			self::$current_brand = self::get_current_brand_for_author( get_queried_object_id() );
+			self::$current_brand = self::get_current_brand_for_author( get_queried_object_id(), $brand_override );
 		} else {
 			self::$current_brand = null;
 		}
