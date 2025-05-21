@@ -320,18 +320,20 @@ class Taxonomy {
 	 * @return void
 	 */
 	public static function determine_current_brand() {
-		global $wp_query;
+		self::$current_brand = null;
+
+		if ( is_front_page() ) {
+			return;
+		}
 
 		$brand_override = self::get_brand_override();
 
-		if ( $wp_query->is_singular() ) {
+		if ( is_singular() ) {
 			self::$current_brand = self::get_current_brand_for_post( get_queried_object(), $brand_override );
-		} elseif ( $wp_query->is_tax() || $wp_query->is_category() || $wp_query->is_tag() ) {
+		} elseif ( is_tax() || is_category() || is_tag() ) {
 			self::$current_brand = self::get_current_brand_for_term( get_queried_object(), $brand_override );
-		} elseif ( $wp_query->is_author() ) {
+		} elseif ( is_author() ) {
 			self::$current_brand = self::get_current_brand_for_author( get_queried_object_id(), $brand_override );
-		} else {
-			self::$current_brand = null;
 		}
 	}
 }
