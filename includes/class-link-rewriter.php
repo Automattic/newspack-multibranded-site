@@ -41,5 +41,19 @@ class Link_Rewriter {
 			filemtime( NEWSPACK_MULTIBRANDED_SITE_PLUGIN_DIR . '/dist/linkRewriter.js' ),
 			true
 		);
+
+		// Expose the current brand slug to JS via wp_localize_script.
+		$current_brand = null;
+		if ( class_exists( '\\Newspack_Multibranded_Site\\Taxonomy' ) && method_exists( '\\Newspack_Multibranded_Site\\Taxonomy', 'get_current' ) ) {
+			$brand = \Newspack_Multibranded_Site\Taxonomy::get_current();
+			if ( $brand instanceof \WP_Term ) {
+				$current_brand = $brand->slug;
+			}
+		}
+		wp_localize_script(
+			'newspack-link-rewriter',
+			'newspackBrandData',
+			[ 'current' => $current_brand ]
+		);
 	}
 }
