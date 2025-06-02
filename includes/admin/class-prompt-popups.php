@@ -27,7 +27,7 @@ class Prompt_Popups {
 	public static function enqueue_scripts() {
 		$screen = get_current_screen();
 
-		if ( 'newspack_page_newspack-popups-wizard' !== $screen->base ) {
+		if ( 'audience_page_newspack-audience-campaigns' !== $screen->base ) {
 			return;
 		}
 
