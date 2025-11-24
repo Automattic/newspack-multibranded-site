@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/Automattic/newspack-multibranded-site/compare/v2.1.0...v2.2.0) (2025-11-24)
+
+
+### Features
+
+* Merge pull request [#87](https://github.com/Automattic/newspack-multibranded-site/issues/87) from Automattic/trunk ([0155b5b](https://github.com/Automattic/newspack-multibranded-site/commit/0155b5be2d2cae92232d087b8e33e76aef030091))
+
 # [2.1.0](https://github.com/Automattic/newspack-multibranded-site/compare/v2.0.6...v2.1.0) (2025-08-25)
 
 
