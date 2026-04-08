@@ -26,10 +26,93 @@ class Url {
 	/**
 	 * Parse the request
 	 *
+	 * Handles two URL modes for brands:
+	 * - "Homepage" mode (_custom_url=yes): brand at site root, e.g. /sports/
+	 * - "Default" mode (_custom_url=no): brand under /brand/ prefix, e.g. /brand/lifestyle/
+	 *
+	 * The "Default" mode requires special handling because other plugins (e.g.
+	 * WooCommerce) may register taxonomies with the same "brand" rewrite slug,
+	 * causing their rewrite rules to capture /brand/{slug}/ requests. This method
+	 * detects when a request was matched to a conflicting taxonomy and re-routes
+	 * it to our brand taxonomy when appropriate.
+	 *
 	 * @param WP $wp The WP object.
 	 * @return void
 	 */
 	public static function parse_request( $wp ) {
+		// Handle "Default" mode: detect /brand/{slug}/ captured by a conflicting taxonomy.
+		self::maybe_resolve_rewrite_conflict( $wp );
+
+		// Handle "Homepage" mode: detect brand slugs at the site root.
+		self::maybe_resolve_root_brand( $wp );
+	}
+
+	/**
+	 * Resolve rewrite conflicts for the "Default" URL mode.
+	 *
+	 * When another taxonomy shares the "brand" rewrite slug, its rewrite rules
+	 * capture /brand/{slug}/ requests. This checks if the matched slug is
+	 * actually a brand term in our taxonomy and re-routes accordingly.
+	 *
+	 * @param WP $wp The WP object.
+	 * @return void
+	 */
+	private static function maybe_resolve_rewrite_conflict( $wp ) {
+		$matched_query = wp_parse_args( $wp->matched_query );
+
+		// Find any query var from a taxonomy whose rewrite slug is "brand".
+		$conflicting_slug = self::get_conflicting_brand_slug( $matched_query );
+		if ( ! $conflicting_slug ) {
+			return;
+		}
+
+		$term = get_term_by( 'slug', $conflicting_slug, Taxonomy::SLUG );
+		if ( ! $term instanceof \WP_Term ) {
+			return;
+		}
+
+		// Remove the conflicting taxonomy's query var and set ours.
+		foreach ( $wp->query_vars as $key => $value ) {
+			if ( $value === $conflicting_slug && $key !== Taxonomy::SLUG ) {
+				unset( $wp->query_vars[ $key ] );
+			}
+		}
+		$wp->query_vars[ Taxonomy::SLUG ] = $term->slug;
+	}
+
+	/**
+	 * Get the brand slug from a query matched by a conflicting taxonomy.
+	 *
+	 * Checks all registered taxonomies for any that use "brand" as their rewrite
+	 * slug (other than our own) and returns the matched term slug if found.
+	 *
+	 * @param array $matched_query The parsed matched query args.
+	 * @return string|null The matched slug, or null if no conflict.
+	 */
+	private static function get_conflicting_brand_slug( $matched_query ) {
+		$taxonomies = get_taxonomies( [ 'public' => true ], 'objects' );
+		foreach ( $taxonomies as $taxonomy ) {
+			if ( Taxonomy::SLUG === $taxonomy->name ) {
+				continue;
+			}
+			$rewrite_slug = isset( $taxonomy->rewrite['slug'] ) ? $taxonomy->rewrite['slug'] : $taxonomy->name;
+			if ( Taxonomy::SLUG !== $rewrite_slug ) {
+				continue;
+			}
+			if ( ! empty( $matched_query[ $taxonomy->query_var ] ) ) {
+				return $matched_query[ $taxonomy->query_var ];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Resolve brand slugs at the site root ("Homepage" URL mode).
+	 *
+	 * @param WP $wp The WP object.
+	 * @return void
+	 */
+	private static function maybe_resolve_root_brand( $wp ) {
 		$matched_query = wp_parse_args( $wp->matched_query );
 
 		if ( empty( $matched_query['pagename'] ) && empty( $matched_query['name'] ) ) {
@@ -42,7 +125,7 @@ class Url {
 			array(
 				'taxonomy'   => Taxonomy::SLUG,
 				'hide_empty' => false,
-				'meta_key'   => Url_Meta::get_key(), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'meta_key'   => Url_Meta::get_key(), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'meta_value' => 'yes', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
