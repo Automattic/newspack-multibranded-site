@@ -71,6 +71,13 @@ class Url {
 			return;
 		}
 
+		// Skip brands configured for root URL mode — they live at /{slug}/, not
+		// /brand/{slug}/, so we should not claim the /brand/ path for them.
+		$custom_url = get_term_meta( $term->term_id, Url_Meta::get_key(), true );
+		if ( 'yes' === $custom_url ) {
+			return;
+		}
+
 		// Remove the conflicting taxonomy's query var and set ours.
 		foreach ( $wp->query_vars as $key => $value ) {
 			if ( $value === $conflicting_slug && $key !== Taxonomy::SLUG ) {

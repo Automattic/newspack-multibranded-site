@@ -102,4 +102,39 @@ class TestUrlCustomization extends WP_UnitTestCase {
 		// Clean up.
 		unregister_taxonomy( 'test_product_brand' );
 	}
+
+	/**
+	 * Tests that homepage-mode brands (_custom_url=yes) are not claimed at
+	 * /brand/{slug}/ — they live at the site root instead.
+	 */
+	public function test_parse_request_skips_homepage_mode_brands() {
+		register_taxonomy(
+			'test_product_brand',
+			'product',
+			[
+				'public'    => true,
+				'rewrite'   => [ 'slug' => 'brand' ],
+				'query_var' => 'test_product_brand',
+			]
+		);
+
+		$brand = $this->factory->term->create_and_get( [ 'taxonomy' => Taxonomy::SLUG ] );
+		add_term_meta( $brand->term_id, Url_Meta::get_key(), 'yes' );
+
+		$this->set_permalink_structure( '/%postname%/' );
+
+		// Simulate /brand/{slug}/ captured by the conflicting taxonomy.
+		global $wp;
+		$wp->matched_query = 'test_product_brand=' . $brand->slug;
+		$wp->query_vars    = [ 'test_product_brand' => $brand->slug ];
+
+		Newspack_Multibranded_Site\Customizations\Url::parse_request( $wp );
+
+		// The brand has _custom_url=yes, so it should NOT be claimed at /brand/.
+		$this->assertArrayNotHasKey( Taxonomy::SLUG, $wp->query_vars, 'Homepage-mode brand should not be claimed at /brand/ path.' );
+		$this->assertSame( $brand->slug, $wp->query_vars['test_product_brand'], 'Conflicting query var should remain for homepage-mode brands.' );
+
+		// Clean up.
+		unregister_taxonomy( 'test_product_brand' );
+	}
 }
