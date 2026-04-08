@@ -60,13 +60,13 @@ class Url {
 	private static function maybe_resolve_rewrite_conflict( $wp ) {
 		$matched_query = wp_parse_args( $wp->matched_query );
 
-		// Find any query var from a taxonomy whose rewrite slug is "brand".
-		$conflicting_slug = self::get_conflicting_brand_slug( $matched_query );
-		if ( ! $conflicting_slug ) {
+		// Find the query var and slug from a taxonomy whose rewrite slug is "brand".
+		$conflict = self::get_conflicting_brand_query_var( $matched_query );
+		if ( ! $conflict ) {
 			return;
 		}
 
-		$term = get_term_by( 'slug', $conflicting_slug, Taxonomy::SLUG );
+		$term = get_term_by( 'slug', $conflict['slug'], Taxonomy::SLUG );
 		if ( ! $term instanceof \WP_Term ) {
 			return;
 		}
@@ -78,36 +78,38 @@ class Url {
 			return;
 		}
 
-		// Remove the conflicting taxonomy's query var and set ours.
-		foreach ( $wp->query_vars as $key => $value ) {
-			if ( $value === $conflicting_slug && $key !== Taxonomy::SLUG ) {
-				unset( $wp->query_vars[ $key ] );
-			}
-		}
+		// Remove the specific conflicting taxonomy's query var and set ours.
+		unset( $wp->query_vars[ $conflict['query_var'] ] );
 		$wp->query_vars[ Taxonomy::SLUG ] = $term->slug;
 	}
 
 	/**
-	 * Get the brand slug from a query matched by a conflicting taxonomy.
+	 * Get the query var and slug from a conflicting taxonomy match.
 	 *
 	 * Checks all registered taxonomies for any that use "brand" as their rewrite
-	 * slug (other than our own) and returns the matched term slug if found.
+	 * slug (other than our own) and returns the matched query var name and term
+	 * slug if found.
 	 *
 	 * @param array $matched_query The parsed matched query args.
-	 * @return string|null The matched slug, or null if no conflict.
+	 * @return array|null Array with 'query_var' and 'slug' keys, or null if no conflict.
 	 */
-	private static function get_conflicting_brand_slug( $matched_query ) {
+	private static function get_conflicting_brand_query_var( $matched_query ) {
 		$taxonomies = get_taxonomies( [ 'public' => true ], 'objects' );
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( Taxonomy::SLUG === $taxonomy->name ) {
 				continue;
 			}
-			$rewrite_slug = isset( $taxonomy->rewrite['slug'] ) ? $taxonomy->rewrite['slug'] : $taxonomy->name;
+			$rewrite_slug = is_array( $taxonomy->rewrite ) && isset( $taxonomy->rewrite['slug'] )
+				? $taxonomy->rewrite['slug']
+				: $taxonomy->name;
 			if ( Taxonomy::SLUG !== $rewrite_slug ) {
 				continue;
 			}
 			if ( ! empty( $matched_query[ $taxonomy->query_var ] ) ) {
-				return $matched_query[ $taxonomy->query_var ];
+				return [
+					'query_var' => $taxonomy->query_var,
+					'slug'      => $matched_query[ $taxonomy->query_var ],
+				];
 			}
 		}
 		return null;
