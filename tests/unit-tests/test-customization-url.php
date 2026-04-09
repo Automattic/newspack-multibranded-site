@@ -14,6 +14,16 @@ use Newspack_Multibranded_Site\Meta\Url as Url_Meta;
 class TestUrlCustomization extends WP_UnitTestCase {
 
 	/**
+	 * Clean up the conflicting taxonomy after each test so it never leaks.
+	 */
+	public function tearDown(): void {
+		if ( taxonomy_exists( 'test_product_brand' ) ) {
+			unregister_taxonomy( 'test_product_brand' );
+		}
+		parent::tearDown();
+	}
+
+	/**
 	 * Tests get current brand and determine current brand methods
 	 */
 	public function test_parse_request() {
@@ -67,9 +77,6 @@ class TestUrlCustomization extends WP_UnitTestCase {
 		$this->assertArrayHasKey( Taxonomy::SLUG, $wp->query_vars, 'Brand query var should be set.' );
 		$this->assertSame( $brand->slug, $wp->query_vars[ Taxonomy::SLUG ] );
 		$this->assertArrayNotHasKey( 'test_product_brand', $wp->query_vars, 'Conflicting query var should be removed.' );
-
-		// Clean up.
-		unregister_taxonomy( 'test_product_brand' );
 	}
 
 	/**
@@ -98,9 +105,6 @@ class TestUrlCustomization extends WP_UnitTestCase {
 
 		$this->assertArrayNotHasKey( Taxonomy::SLUG, $wp->query_vars, 'Brand query var should not be set for non-brand slugs.' );
 		$this->assertSame( 'nike', $wp->query_vars['test_product_brand'], 'Conflicting query var should remain for non-brand slugs.' );
-
-		// Clean up.
-		unregister_taxonomy( 'test_product_brand' );
 	}
 
 	/**
@@ -133,8 +137,5 @@ class TestUrlCustomization extends WP_UnitTestCase {
 		// The brand has _custom_url=yes, so it should NOT be claimed at /brand/.
 		$this->assertArrayNotHasKey( Taxonomy::SLUG, $wp->query_vars, 'Homepage-mode brand should not be claimed at /brand/ path.' );
 		$this->assertSame( $brand->slug, $wp->query_vars['test_product_brand'], 'Conflicting query var should remain for homepage-mode brands.' );
-
-		// Clean up.
-		unregister_taxonomy( 'test_product_brand' );
 	}
 }
