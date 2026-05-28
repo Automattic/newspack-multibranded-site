@@ -99,10 +99,15 @@ class Url {
 			if ( Taxonomy::SLUG === $taxonomy->name ) {
 				continue;
 			}
-			$rewrite_slug = is_array( $taxonomy->rewrite ) && isset( $taxonomy->rewrite['slug'] )
-				? $taxonomy->rewrite['slug']
-				: $taxonomy->name;
+			// Skip taxonomies without rewrite rules — they cannot conflict with /brand/.
+			if ( ! is_array( $taxonomy->rewrite ) ) {
+				continue;
+			}
+			$rewrite_slug = $taxonomy->rewrite['slug'] ?? $taxonomy->name;
 			if ( Taxonomy::SLUG !== $rewrite_slug ) {
+				continue;
+			}
+			if ( empty( $taxonomy->query_var ) ) {
 				continue;
 			}
 			if ( ! empty( $matched_query[ $taxonomy->query_var ] ) ) {

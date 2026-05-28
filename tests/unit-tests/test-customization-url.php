@@ -108,6 +108,23 @@ class TestUrlCustomization extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that parse_request is a no-op when no other taxonomy with the
+	 * "brand" rewrite slug is registered (the common case).
+	 */
+	public function test_parse_request_no_op_without_conflict() {
+		$this->set_permalink_structure( '/%postname%/' );
+
+		global $wp;
+		$wp->matched_query = 'pagename=about';
+		$wp->query_vars    = [ 'pagename' => 'about' ];
+
+		Newspack_Multibranded_Site\Customizations\Url::parse_request( $wp );
+
+		$this->assertArrayNotHasKey( Taxonomy::SLUG, $wp->query_vars, 'Brand var should not be set without a conflict.' );
+		$this->assertSame( 'about', $wp->query_vars['pagename'], 'Existing query vars should be untouched.' );
+	}
+
+	/**
 	 * Tests that homepage-mode brands (_custom_url=yes) are not claimed at
 	 * /brand/{slug}/ — they live at the site root instead.
 	 */
