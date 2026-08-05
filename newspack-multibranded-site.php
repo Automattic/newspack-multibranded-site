@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Newspack Multibranded Site
- * Description: Brand different content and sections of your site with unique colors and navigation.
+ * Plugin Name: Newspack Multibranded Site (WRONG VERSION)
+ * Description: This plugin was downloaded from the legacy plugin repo. Please download the latest version from https://github.com/Automattic/newspack-workspace.
  * Version: 2.2.0
  * Author: Automattic
  * Author URI: https://newspack.com/

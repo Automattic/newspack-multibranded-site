@@ -1,3 +1,3 @@
-# Newspack Multibranded Site plugin
+# Newspack Multibranded Site
 
-Brand different content and sections of your site with unique colors and navigation.
+This repository has been deprecated and archived. This extension now lives in our monorepo at https://github.com/Automattic/newspack-workspace.
